@@ -1,0 +1,213 @@
+---
+title: "Assigment 2"
+author: "Alícia Chimeno Sarabia and Bruna"
+date: "2023-12-02"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+# Libraries
+```{r}
+library(skimr)
+library(car)
+```
+
+# Load dataset
+```{r}
+setwd("/Users/ali/Desktop/MASTER/SIM/proj2")
+# aqui fica la teva ubi Bruna
+df<-read.csv("customer.xls", sep=",")
+```
+
+# Data context
+This dataset contains information about customers. Demographic data, 
+
+# Data exploration
+
+```{r}
+dim(df)
+names(df)
+str(df)
+#summary(df)
+#skim(df)
+```
+
+## Variables description
+In total, we have 21 variables related to demographic, services, and accountant data. One is the ID, three are numerical variables, and 17 are categorical (? binary) variables. We will conduct a descriptive analysis and a data quality report for each variable, considering aspects such as the number of missing values, errors, and the distribution or balance of the variable...
+#### 1. customerID 
+
+### Demographic data
+#### 2. gender
+Is a binary variable (female/male). 
+```{r}
+sum(is.na(df$gender))
+table(df$gender)
+barplot(table(df$gender), main = "Distribution of gender",xlab = "Gender",col = "skyblue")
+```
+
+#### 3. SeniorCitizen
+Is a binary variable, YES/NO. 
+```{r}
+sum(is.na(df$SeniorCitizen))
+table(df$SeniorCitizen)
+barplot(table(df$SeniorCitizen), main = "Distribution of SeniorCitizen",xlab = "SeniorCitizen",col = "skyblue")
+```
+
+#### 4. Partner
+It is a binary variable. Levels: Yes/No. 
+```{r}
+sum(is.na(df$Partner))
+table(df$Partner)
+barplot(table(df$Partner), main = "Distribution of Partner",xlab = "Partner",col = "skyblue")
+```
+
+
+#### 5. Dependents
+It is a binary variable. Levels: Yes/No. 
+```{r}
+sum(is.na(df$Dependents))
+table(df$Dependents)
+barplot(table(df$Dependents), main = "Distribution of Dependents",xlab = "Dependents",col = "skyblue")
+
+```
+
+### Services of the costumer data
+Services that each customer has signed up for :
+#### 6. tenure
+It is a numerical variable that indicates the duration, in months, that the customer has stayed with the company. 
+```{r}
+
+```
+
+#### 7. PhoneService 
+It is a binary variable. Levels: Yes/No. 
+```{r}
+sum(is.na(df$PhoneService))
+table(df$PhoneService)
+barplot(table(df$PhoneService), main = "Distribution of PhoneService",xlab = "PhoneService",col = "skyblue")
+```
+
+#### 8. MultipleLines
+It is a binary variable. Levels: Yes/No. 
+```{r}
+sum(is.na(df$MultipleLines))
+table(df$MultipleLines)
+```
+
+```{r}
+# check inconsistencies
+subset(df, MultipleLines == "Yes" & PhoneService == "No") 
+```
+
+
+#### 9. InternetService
+It is a binary variable. Levels: Yes/No. 
+
+```{r}
+table(df$InternetService)
+```
+
+#### 10. OnlineSecurity
+It is a factor variable with 3 levels: 
+```{r}
+table(df$OnlineSecurity)
+```
+
+```{r}
+# Check concistency
+sum(df$InternetService == "No")
+sum(df$OnlineSecurity == "No internet service")
+```
+
+
+#### 11. OnlineBackup
+
+#### 12. DeviceProtection
+
+#### 13. TechSupport
+
+#### 14. StreamingTV
+
+#### 15. StreamingMovies
+
+
+### Customer account data
+#### 16. Contract
+
+#### 17. PaperlessBilling
+Is a binary variable. 
+
+#### 18. PaymentMethod
+Is a factor variable with 4 levels: 
+
+#### 19. MonthlyCharges (numeric)
+
+```{r}
+summary(df$MonthlyCharges)
+hist(df$MonthlyCharges,breaks=20)
+```
+
+
+```{r}
+Boxplot(df$MonthlyCharges, main="Outlier analysis for MonthlyCharges")
+sm <- summary(df$MonthlyCharges)
+iqr <- sm["3rd Qu."] - sm["1st Qu."]
+# Mild Outliers
+mild_ub <- sm["3rd Qu."] + 1.5 * iqr
+mild_lb <- sm["1st Qu."] - 1.5 * iqr
+length(which(df$MonthlyCharges > mild_ub | df$MonthlyCharges < mild_lb)) # number of mild outliers
+
+# Severe Outliers
+severe_ub <- sm["3rd Qu."] + 3 * iqr
+severe_lb <- sm["1st Qu."] - 3 * iqr
+length(which(df$MonthlyCharges > severe_ub | df$MonthlyCharges < severe_lb)) # number of severe outliers
+
+```
+
+
+#### 20. TotalCharges (numeric)
+
+```{r}
+summary(df$TotalCharges)
+hist(df$TotalCharges,breaks=20)
+```
+
+
+```{r}
+Boxplot(df$TotalCharges, main="Outlier analysis for TotalCharges")
+sm <- summary(df$TotalCharges)
+iqr <- sm["3rd Qu."] - sm["1st Qu."]
+# Mild Outliers
+mild_ub <- sm["3rd Qu."] + 1.5 * iqr
+mild_lb <- sm["1st Qu."] - 1.5 * iqr
+length(which(df$TotalCharges > mild_ub | df$TotalCharges < mild_lb)) # number of mild outliers
+
+# Severe Outliers
+severe_ub <- sm["3rd Qu."] + 3 * iqr
+severe_lb <- sm["1st Qu."] - 3 * iqr
+length(which(df$TotalCharges > severe_ub | df$TotalCharges < severe_lb)) # number of severe outliers
+
+```
+### Target: 
+#### 21. Churn
+It is the target variable. It is binary, describes whether the customer churned or not (Yes or No). 
+
+
+## Data preprocessing
+### Recode variables into correct type
+We shall reconvert the type of certain variables that are encoded with wrong type. First, we convert the character variables (except the ID) into factors.
+```{r}
+char_cols <- which(sapply(df, is.character))
+df[, char_cols[-1]]<- lapply(df[, char_cols[-1]], as.factor) 
+```
+
+Also, we convert the numerical variable SeniorCitizen into a factor.  
+```{r}
+df$SeniorCitizen<- factor(df$SeniorCitizen)
+```
+
+```{r}
+summary(df)
+```
+

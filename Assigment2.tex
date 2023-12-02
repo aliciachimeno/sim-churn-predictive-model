@@ -1,0 +1,580 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{lmodern}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\usepackage[margin=1in]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same} % disable monospaced font for URLs
+\hypersetup{
+  pdftitle={Assigment 2},
+  pdfauthor={Alícia Chimeno Sarabia},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\title{Assigment 2}
+\author{Alícia Chimeno Sarabia}
+\date{2023-12-02}
+
+\begin{document}
+\maketitle
+
+\hypertarget{libraries}{%
+\section{Libraries}\label{libraries}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(skimr)}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{load-dataset}{%
+\section{Load dataset}\label{load-dataset}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{setwd}\NormalTok{(}\StringTok{"/Users/ali/Desktop/MASTER/MVA {-} ANÀLISI MULTIVARIANT/proj2"}\NormalTok{)}
+\NormalTok{df}\OtherTok{\textless{}{-}}\FunctionTok{read.csv}\NormalTok{(}\StringTok{"customer.xls"}\NormalTok{, }\AttributeTok{sep=}\StringTok{","}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{data-context}{%
+\section{Data context}\label{data-context}}
+
+This dataset contains information about customers. Demographic data,
+
+\hypertarget{data-exploration}{%
+\section{Data exploration}\label{data-exploration}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{dim}\NormalTok{(df)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 7043   21
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{names}\NormalTok{(df)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##  [1] "customerID"       "gender"           "SeniorCitizen"    "Partner"         
+##  [5] "Dependents"       "tenure"           "PhoneService"     "MultipleLines"   
+##  [9] "InternetService"  "OnlineSecurity"   "OnlineBackup"     "DeviceProtection"
+## [13] "TechSupport"      "StreamingTV"      "StreamingMovies"  "Contract"        
+## [17] "PaperlessBilling" "PaymentMethod"    "MonthlyCharges"   "TotalCharges"    
+## [21] "Churn"
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{str}\NormalTok{(df)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 'data.frame':    7043 obs. of  21 variables:
+##  $ customerID      : chr  "7590-VHVEG" "5575-GNVDE" "3668-QPYBK" "7795-CFOCW" ...
+##  $ gender          : chr  "Female" "Male" "Male" "Male" ...
+##  $ SeniorCitizen   : int  0 0 0 0 0 0 0 0 0 0 ...
+##  $ Partner         : chr  "Yes" "No" "No" "No" ...
+##  $ Dependents      : chr  "No" "No" "No" "No" ...
+##  $ tenure          : int  1 34 2 45 2 8 22 10 28 62 ...
+##  $ PhoneService    : chr  "No" "Yes" "Yes" "No" ...
+##  $ MultipleLines   : chr  "No phone service" "No" "No" "No phone service" ...
+##  $ InternetService : chr  "DSL" "DSL" "DSL" "DSL" ...
+##  $ OnlineSecurity  : chr  "No" "Yes" "Yes" "Yes" ...
+##  $ OnlineBackup    : chr  "Yes" "No" "Yes" "No" ...
+##  $ DeviceProtection: chr  "No" "Yes" "No" "Yes" ...
+##  $ TechSupport     : chr  "No" "No" "No" "Yes" ...
+##  $ StreamingTV     : chr  "No" "No" "No" "No" ...
+##  $ StreamingMovies : chr  "No" "No" "No" "No" ...
+##  $ Contract        : chr  "Month-to-month" "One year" "Month-to-month" "One year" ...
+##  $ PaperlessBilling: chr  "Yes" "No" "Yes" "No" ...
+##  $ PaymentMethod   : chr  "Electronic check" "Mailed check" "Mailed check" "Bank transfer (automatic)" ...
+##  $ MonthlyCharges  : num  29.9 57 53.9 42.3 70.7 ...
+##  $ TotalCharges    : num  29.9 1889.5 108.2 1840.8 151.7 ...
+##  $ Churn           : chr  "No" "No" "Yes" "No" ...
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{summary}\NormalTok{(df)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##   customerID           gender          SeniorCitizen      Partner         
+##  Length:7043        Length:7043        Min.   :0.0000   Length:7043       
+##  Class :character   Class :character   1st Qu.:0.0000   Class :character  
+##  Mode  :character   Mode  :character   Median :0.0000   Mode  :character  
+##                                        Mean   :0.1621                     
+##                                        3rd Qu.:0.0000                     
+##                                        Max.   :1.0000                     
+##                                                                           
+##   Dependents            tenure      PhoneService       MultipleLines     
+##  Length:7043        Min.   : 0.00   Length:7043        Length:7043       
+##  Class :character   1st Qu.: 9.00   Class :character   Class :character  
+##  Mode  :character   Median :29.00   Mode  :character   Mode  :character  
+##                     Mean   :32.37                                        
+##                     3rd Qu.:55.00                                        
+##                     Max.   :72.00                                        
+##                                                                          
+##  InternetService    OnlineSecurity     OnlineBackup       DeviceProtection  
+##  Length:7043        Length:7043        Length:7043        Length:7043       
+##  Class :character   Class :character   Class :character   Class :character  
+##  Mode  :character   Mode  :character   Mode  :character   Mode  :character  
+##                                                                             
+##                                                                             
+##                                                                             
+##                                                                             
+##  TechSupport        StreamingTV        StreamingMovies      Contract        
+##  Length:7043        Length:7043        Length:7043        Length:7043       
+##  Class :character   Class :character   Class :character   Class :character  
+##  Mode  :character   Mode  :character   Mode  :character   Mode  :character  
+##                                                                             
+##                                                                             
+##                                                                             
+##                                                                             
+##  PaperlessBilling   PaymentMethod      MonthlyCharges    TotalCharges   
+##  Length:7043        Length:7043        Min.   : 18.25   Min.   :  18.8  
+##  Class :character   Class :character   1st Qu.: 35.50   1st Qu.: 401.4  
+##  Mode  :character   Mode  :character   Median : 70.35   Median :1397.5  
+##                                        Mean   : 64.76   Mean   :2283.3  
+##                                        3rd Qu.: 89.85   3rd Qu.:3794.7  
+##                                        Max.   :118.75   Max.   :8684.8  
+##                                                         NA's   :11      
+##     Churn          
+##  Length:7043       
+##  Class :character  
+##  Mode  :character  
+##                    
+##                    
+##                    
+## 
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{skim}\NormalTok{(df)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{longtable}[]{@{}ll@{}}
+\caption{Data summary}\tabularnewline
+\toprule()
+\endhead
+Name & df \\
+Number of rows & 7043 \\
+Number of columns & 21 \\
+\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ & \\
+Column type frequency: & \\
+character & 17 \\
+numeric & 4 \\
+\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ & \\
+Group variables & None \\
+\bottomrule()
+\end{longtable}
+
+\textbf{Variable type: character}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 14\tabcolsep) * \real{0.2267}}
+  >{\raggedleft\arraybackslash}p{(\columnwidth - 14\tabcolsep) * \real{0.1333}}
+  >{\raggedleft\arraybackslash}p{(\columnwidth - 14\tabcolsep) * \real{0.1867}}
+  >{\raggedleft\arraybackslash}p{(\columnwidth - 14\tabcolsep) * \real{0.0533}}
+  >{\raggedleft\arraybackslash}p{(\columnwidth - 14\tabcolsep) * \real{0.0533}}
+  >{\raggedleft\arraybackslash}p{(\columnwidth - 14\tabcolsep) * \real{0.0800}}
+  >{\raggedleft\arraybackslash}p{(\columnwidth - 14\tabcolsep) * \real{0.1200}}
+  >{\raggedleft\arraybackslash}p{(\columnwidth - 14\tabcolsep) * \real{0.1467}}@{}}
+\toprule()
+\begin{minipage}[b]{\linewidth}\raggedright
+skim\_variable
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+n\_missing
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+complete\_rate
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+min
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+max
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+empty
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+n\_unique
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+whitespace
+\end{minipage} \\
+\midrule()
+\endhead
+customerID & 0 & 1 & 10 & 10 & 0 & 7043 & 0 \\
+gender & 0 & 1 & 4 & 6 & 0 & 2 & 0 \\
+Partner & 0 & 1 & 2 & 3 & 0 & 2 & 0 \\
+Dependents & 0 & 1 & 2 & 3 & 0 & 2 & 0 \\
+PhoneService & 0 & 1 & 2 & 3 & 0 & 2 & 0 \\
+MultipleLines & 0 & 1 & 2 & 16 & 0 & 3 & 0 \\
+InternetService & 0 & 1 & 2 & 11 & 0 & 3 & 0 \\
+OnlineSecurity & 0 & 1 & 2 & 19 & 0 & 3 & 0 \\
+OnlineBackup & 0 & 1 & 2 & 19 & 0 & 3 & 0 \\
+DeviceProtection & 0 & 1 & 2 & 19 & 0 & 3 & 0 \\
+TechSupport & 0 & 1 & 2 & 19 & 0 & 3 & 0 \\
+StreamingTV & 0 & 1 & 2 & 19 & 0 & 3 & 0 \\
+StreamingMovies & 0 & 1 & 2 & 19 & 0 & 3 & 0 \\
+Contract & 0 & 1 & 8 & 14 & 0 & 3 & 0 \\
+PaperlessBilling & 0 & 1 & 2 & 3 & 0 & 2 & 0 \\
+PaymentMethod & 0 & 1 & 12 & 25 & 0 & 4 & 0 \\
+Churn & 0 & 1 & 2 & 3 & 0 & 2 & 0 \\
+\bottomrule()
+\end{longtable}
+
+\textbf{Variable type: numeric}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 20\tabcolsep) * \real{0.1531}}
+  >{\raggedleft\arraybackslash}p{(\columnwidth - 20\tabcolsep) * \real{0.1020}}
+  >{\raggedleft\arraybackslash}p{(\columnwidth - 20\tabcolsep) * \real{0.1429}}
+  >{\raggedleft\arraybackslash}p{(\columnwidth - 20\tabcolsep) * \real{0.0816}}
+  >{\raggedleft\arraybackslash}p{(\columnwidth - 20\tabcolsep) * \real{0.0816}}
+  >{\raggedleft\arraybackslash}p{(\columnwidth - 20\tabcolsep) * \real{0.0612}}
+  >{\raggedleft\arraybackslash}p{(\columnwidth - 20\tabcolsep) * \real{0.0714}}
+  >{\raggedleft\arraybackslash}p{(\columnwidth - 20\tabcolsep) * \real{0.0816}}
+  >{\raggedleft\arraybackslash}p{(\columnwidth - 20\tabcolsep) * \real{0.0816}}
+  >{\raggedleft\arraybackslash}p{(\columnwidth - 20\tabcolsep) * \real{0.0816}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 20\tabcolsep) * \real{0.0612}}@{}}
+\toprule()
+\begin{minipage}[b]{\linewidth}\raggedright
+skim\_variable
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+n\_missing
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+complete\_rate
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+mean
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+sd
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+p0
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+p25
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+p50
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+p75
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+p100
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+hist
+\end{minipage} \\
+\midrule()
+\endhead
+SeniorCitizen & 0 & 1 & 0.16 & 0.37 & 0.00 & 0.00 & 0.00 & 0.00 & 1.00 &
+▇▁▁▁▂ \\
+tenure & 0 & 1 & 32.37 & 24.56 & 0.00 & 9.00 & 29.00 & 55.00 & 72.00 &
+▇▃▃▃▆ \\
+MonthlyCharges & 0 & 1 & 64.76 & 30.09 & 18.25 & 35.50 & 70.35 & 89.85 &
+118.75 & ▇▅▆▇▅ \\
+TotalCharges & 11 & 1 & 2283.30 & 2266.77 & 18.80 & 401.45 & 1397.47 &
+3794.74 & 8684.80 & ▇▂▂▂▁ \\
+\bottomrule()
+\end{longtable}
+
+\hypertarget{variables-description}{%
+\subsection{Variables description}\label{variables-description}}
+
+\hypertarget{customerid}{%
+\paragraph{1. customerID}\label{customerid}}
+
+\hypertarget{demographic-data}{%
+\subsubsection{Demographic data}\label{demographic-data}}
+
+\hypertarget{gender}{%
+\paragraph{2. gender}\label{gender}}
+
+Is a binary variable (female/male).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{table}\NormalTok{(df}\SpecialCharTok{$}\NormalTok{gender)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Female   Male 
+##   3488   3555
+\end{verbatim}
+
+\hypertarget{seniorcitizen}{%
+\paragraph{3. SeniorCitizen}\label{seniorcitizen}}
+
+Is a binary variable, YES/NO.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{table}\NormalTok{(df}\SpecialCharTok{$}\NormalTok{SeniorCitizen)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##    0    1 
+## 5901 1142
+\end{verbatim}
+
+\hypertarget{partner}{%
+\paragraph{4. Partner}\label{partner}}
+
+It is a binary variable. Levels: Yes/No.~
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{table}\NormalTok{(df}\SpecialCharTok{$}\NormalTok{Partner)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##   No  Yes 
+## 3641 3402
+\end{verbatim}
+
+\hypertarget{dependents}{%
+\paragraph{5. Dependents}\label{dependents}}
+
+It is a binary variable. Levels: Yes/No.~
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{table}\NormalTok{(df}\SpecialCharTok{$}\NormalTok{Dependents)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##   No  Yes 
+## 4933 2110
+\end{verbatim}
+
+\hypertarget{services-of-the-costumer}{%
+\subsubsection{Services of the
+costumer}\label{services-of-the-costumer}}
+
+Services that each customer has signed up for : \#\#\#\# 6. tenure It is
+a numerical variable that indicates the duration, in months, that the
+customer has stayed with the company.
+
+\hypertarget{phoneservice}{%
+\paragraph{7. PhoneService}\label{phoneservice}}
+
+It is a binary variable. Levels: Yes/No.~
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{table}\NormalTok{(df}\SpecialCharTok{$}\NormalTok{PhoneService)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##   No  Yes 
+##  682 6361
+\end{verbatim}
+
+\hypertarget{multiplelines}{%
+\paragraph{8. MultipleLines}\label{multiplelines}}
+
+It is a binary variable. Levels: Yes/No.~
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{table}\NormalTok{(df}\SpecialCharTok{$}\NormalTok{MultipleLines)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##               No No phone service              Yes 
+##             3390              682             2971
+\end{verbatim}
+
+\hypertarget{internetservice}{%
+\paragraph{9. InternetService}\label{internetservice}}
+
+It is a binary variable. Levels: Yes/No.~
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{table}\NormalTok{(df}\SpecialCharTok{$}\NormalTok{InternetService)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##         DSL Fiber optic          No 
+##        2421        3096        1526
+\end{verbatim}
+
+\hypertarget{onlinesecurity}{%
+\paragraph{10. OnlineSecurity}\label{onlinesecurity}}
+
+It is a factor variable with 3 levels:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{table}\NormalTok{(df}\SpecialCharTok{$}\NormalTok{OnlineSecurity)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##                  No No internet service                 Yes 
+##                3498                1526                2019
+\end{verbatim}
+
+\hypertarget{onlinebackup}{%
+\paragraph{11. OnlineBackup}\label{onlinebackup}}
+
+\hypertarget{deviceprotection}{%
+\paragraph{12. DeviceProtection}\label{deviceprotection}}
+
+\hypertarget{techsupport}{%
+\paragraph{13. TechSupport}\label{techsupport}}
+
+\hypertarget{streamingtv}{%
+\paragraph{14. StreamingTV}\label{streamingtv}}
+
+\hypertarget{streamingmovies}{%
+\paragraph{15. StreamingMovies}\label{streamingmovies}}
+
+\hypertarget{contract}{%
+\paragraph{16. Contract}\label{contract}}
+
+\hypertarget{paperlessbilling}{%
+\paragraph{17. PaperlessBilling}\label{paperlessbilling}}
+
+Is a binary variable.
+
+\hypertarget{paymentmethod}{%
+\paragraph{18. PaymentMethod}\label{paymentmethod}}
+
+Is a factor variable with 4 levels:
+
+\hypertarget{monthlycharges-numeric}{%
+\paragraph{19. MonthlyCharges (numeric)}\label{monthlycharges-numeric}}
+
+\hypertarget{totalcharges-numeric}{%
+\paragraph{20. TotalCharges (numeric)}\label{totalcharges-numeric}}
+
+\hypertarget{churn}{%
+\paragraph{21. Churn}\label{churn}}
+
+Is the target variable. Is binary, describes whether the customer
+churned or not (Yes or No).
+
+\end{document}
