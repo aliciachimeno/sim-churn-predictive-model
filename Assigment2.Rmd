@@ -15,7 +15,8 @@ library(car)
 
 # Load dataset
 ```{r}
-setwd("/Users/ali/Desktop/MASTER/SIM/proj2")
+#setwd("/Users/ali/Desktop/MASTER/SIM/proj2")
+setwd("C:/Users/Brunil/Desktop/Bruna/Master/SIM/assignment_2")
 # aqui fica la teva ubi Bruna
 df<-read.csv("customer.xls", sep=",")
 ```
@@ -31,6 +32,7 @@ names(df)
 str(df)
 #summary(df)
 #skim(df)
+summary(is.na(df)) #we only have NA values in TotalCharges
 ```
 
 ## Variables description
@@ -77,6 +79,29 @@ Services that each customer has signed up for :
 #### 6. tenure
 It is a numerical variable that indicates the duration, in months, that the customer has stayed with the company. 
 ```{r}
+summary(df$tenure)
+hist(df$tenure,breaks=20)
+```
+
+Outliers
+```{r}
+summary(is.na(df)) #no NA
+boxplot(df$tenure, main="Outlier analysis for Tenure")
+
+sm_t <- summary(df$tenure)
+iqr_t <- sm_t["3rd Qu."] - sm_t["1st Qu."]
+# Mild Outliers
+mild_ub_t <- sm_t["3rd Qu."] + 1.5 * iqr_t
+mild_lb_t <- sm_t["1st Qu."] - 1.5 * iqr_t
+length(which(df$tenure > mild_ub_t | df$tenure < mild_lb_t)) # number of mild outliers
+
+# Severe Outliers
+severe_ub_t <- sm_t["3rd Qu."] + 3 * iqr_t
+severe_lb_t <- sm_t["1st Qu."] - 3 * iqr_t
+length(which(df$tenure > severe_ub_t | df$tenure < severe_lb_t)) # number of severe outliers
+
+
+#no tenim outliers
 
 ```
 
@@ -123,13 +148,71 @@ sum(df$OnlineSecurity == "No internet service")
 
 #### 11. OnlineBackup
 
+It is a factor variable with 3 levels:
+```{r}
+table(df$OnlineBackup)
+```
+
+```{r}
+# Check concistency
+sum(df$OnlineBackup == "No internet service") #1526
+sum(df$OnlineSecurity == "No internet service") #1526
+```
+
 #### 12. DeviceProtection
+
+It is a factor variable with 3 levels:
+
+```{r}
+table(df$DeviceProtection)
+```
+
+
+```{r}
+# Check concistency
+sum(df$OnlineSecurity == "No internet service") #1526
+sum(df$DeviceProtection == "No internet service") #1526
+```
 
 #### 13. TechSupport
 
+It is a factor variable with 3 levels:
+
+```{r}
+table(df$TechSupport)
+```
+```{r}
+#Check consistency
+
+sum(df$DeviceProtection == "No internet service") #1526
+sum(df$TechSupport == "No internet service") #1526
+```
+
 #### 14. StreamingTV
 
+It is a factor variable with 3 levels:
+
+```{r}
+table(df$StreamingTV)
+```
+```{r}
+#Check consistency
+
+sum(df$TechSupport == "No internet service") #1526
+sum(df$StreamingTV == "No internet service") #1526
+```
 #### 15. StreamingMovies
+```{r}
+table(df$StreamingMovies)
+```
+
+```{r}
+#Check consistency
+
+sum(df$StreamingTV == "No internet service") #1526
+sum(df$StreamingMovies == "No internet service") #1526
+
+```
 
 
 ### Customer account data
@@ -168,6 +251,8 @@ length(which(df$MonthlyCharges > severe_ub | df$MonthlyCharges < severe_lb)) # n
 
 #### 20. TotalCharges (numeric)
 
+
+
 ```{r}
 summary(df$TotalCharges)
 hist(df$TotalCharges,breaks=20)
@@ -189,6 +274,13 @@ severe_lb <- sm["1st Qu."] - 3 * iqr
 length(which(df$TotalCharges > severe_ub | df$TotalCharges < severe_lb)) # number of severe outliers
 
 ```
+
+
+Imputation for NA values (ho vols fer aquí o més endavant? com és l'única variable amb NA)
+```{r}
+
+```
+
 ### Target: 
 #### 21. Churn
 It is the target variable. It is binary, describes whether the customer churned or not (Yes or No). 
