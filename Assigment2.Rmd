@@ -15,9 +15,8 @@ library(car)
 
 # Load dataset
 ```{r}
-#setwd("/Users/ali/Desktop/MASTER/SIM/proj2")
-setwd("C:/Users/Brunil/Desktop/Bruna/Master/SIM/assignment_2")
-# aqui fica la teva ubi Bruna
+setwd("/Users/ali/Desktop/MASTER/SIM/proj2")
+#setwd("C:/Users/Brunil/Desktop/Bruna/Master/SIM/assignment_2")
 df<-read.csv("customer.xls", sep=",")
 ```
 
@@ -99,7 +98,6 @@ length(which(df$tenure > mild_ub_t | df$tenure < mild_lb_t)) # number of mild ou
 severe_ub_t <- sm_t["3rd Qu."] + 3 * iqr_t
 severe_lb_t <- sm_t["1st Qu."] - 3 * iqr_t
 length(which(df$tenure > severe_ub_t | df$tenure < severe_lb_t)) # number of severe outliers
-
 
 #no tenim outliers
 
@@ -197,7 +195,6 @@ table(df$StreamingTV)
 ```
 ```{r}
 #Check consistency
-
 sum(df$TechSupport == "No internet service") #1526
 sum(df$StreamingTV == "No internet service") #1526
 ```
@@ -301,5 +298,33 @@ df$SeniorCitizen<- factor(df$SeniorCitizen)
 
 ```{r}
 summary(df)
+str(df)
 ```
 
+### Data imputation
+```{r}
+summary(is.na(df))
+```
+Only the variable TotalCharges has NA's. 
+
+```{r}
+df[is.na(df$TotalCharges), ]
+df[df$tenure==0,]
+df[df$TotalCharges==0, ]
+summary(df$TotalCharges)
+```
+The missing data corresponds to the individuals that have not payed yet the charges of the current month, we can guess that are new clients of the company.
+
+Duplicate values: no
+```{r}
+dim(df)
+length(unique(df$customerID))
+```
+
+```{r}
+
+```
+
+El significat d'aquestos NA son que l'individuu encara no se li ha cobrat el charges ja que no ha arribat a final de més. Una possible solució seria que la variable totalcharges prengui el valor de monthlycharges. 
+
+Suggerim quan tenure==0 eliminem les observacions enlloc d'imputar-les ja que representen un 0.1% de les dades. 
