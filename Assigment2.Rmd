@@ -5,6 +5,8 @@ date: "2023-12-02"
 output:
   html_document: default
   pdf_document: default
+editor_options: 
+  chunk_output_type: console
 ---
 
 # Libraries
@@ -79,7 +81,7 @@ Services that each customer has signed up for :
 It is a numerical variable that indicates the duration, in months, that the customer has stayed with the company. 
 ```{r}
 summary(df$tenure)
-hist(df$tenure,breaks=20)
+hist(df$tenure,breaks=20, col="skyblue")
 ```
 
 Outliers
@@ -327,4 +329,26 @@ length(unique(df$customerID))
 
 El significat d'aquestos NA son que l'individuu encara no se li ha cobrat el charges ja que no ha arribat a final de més. Una possible solució seria que la variable totalcharges prengui el valor de monthlycharges. 
 
-Suggerim quan tenure==0 eliminem les observacions enlloc d'imputar-les ja que representen un 0.1% de les dades. 
+Suggerim quan tenure==0 eliminem les observacions enlloc d'imputar-les ja que representen un 0.1% de les dades.  NO ELIMINEM FIQUEM 0
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
