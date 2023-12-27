@@ -17,8 +17,8 @@ library(car)
 
 # Load dataset
 ```{r}
-setwd("/Users/ali/Desktop/MASTER/SIM/proj2")
-#setwd("C:/Users/Brunil/Desktop/Bruna/Master/SIM/assignment_2")
+#setwd("/Users/ali/Desktop/MASTER/SIM/proj2")
+setwd("C:/Users/Brunil/Desktop/Bruna/Master/SIM/assignment_2")
 df<-read.csv("customer.xls", sep=",")
 ```
 
@@ -323,15 +323,122 @@ dim(df)
 length(unique(df$customerID))
 ```
 
-```{r}
-
-```
 
 El significat d'aquestos NA son que l'individuu encara no se li ha cobrat el charges ja que no ha arribat a final de més. Una possible solució seria que la variable totalcharges prengui el valor de monthlycharges. 
 
 Suggerim quan tenure==0 eliminem les observacions enlloc d'imputar-les ja que representen un 0.1% de les dades.  NO ELIMINEM FIQUEM 0
+```{r}
+ll <- which(is.na(df$TotalCharges))
+df[ll,"TotalCharges"] <- 0
+summary(is.na(df$TotalCharges))
+```
+
+Això crec que és un pas que està descrit al pdf però no sé perquè s'ha de fer
+
+Create variable adding the total number missing values, outliers and errors. Describe these variables, to which other variables exist higher associations.  Compute the correlation with all other variables. Rank these variables according the correlation  Compute for every group of individuals (group of age, size of town, singles, married, …) the mean of missing/outliers/errors values. Rank the groups according the computed mean. 
 
 
+###Modelling
+
+Modelling:
+Train - test → dubte: abans o després de balancejar les dades?
+The dataset is imbalanced.
+Use only glm() modeling tools (parametric and traditional statistical models, baseline for comparison to ML approaches being developed in other subjects)
+Assessment metric: area under the ROC curve score and confusion table prediction capability analysis (recall, F1-score, etc) for train sample and confusion table for test sample
+
+
+```{r}
+set.seed(1234)
+m <- floor(0.7*nrow(df))
+train_d <- sample(seq_len(nrow(df)),size = m)
+
+train <- df[train_d,]
+test <- df[-train_d,]
+
+names(df)
+```
+
+Target variable is Churn
+
+Això ho podem posar a l'annex i deixem els comentaris al report
+
+Univariate
+
+```{r}
+attach(train)
+names(train)
+
+mod <- glm(Churn ~ gender, data=train, family=binomial)
+summary(mod)
+
+mod2 <- glm(Churn ~ SeniorCitizen, data=train, family=binomial)
+summary(mod2)
+
+mod3 <- glm(Churn ~ Partner, data=train, family=binomial)
+summary(mod3)
+
+mod4 <- glm(Churn ~ Dependents, data=train, family=binomial)
+summary(mod4)
+
+mod5 <- glm(Churn ~ tenure, data=train, family=binomial)
+summary(mod5)
+
+mod6 <- glm(Churn ~ PhoneService, data=train, family=binomial)
+summary(mod6)
+
+mod7 <- glm(Churn ~ MultipleLines, data=train, family=binomial)
+summary(mod7)
+
+mod8 <- glm(Churn ~ InternetService, data=train, family=binomial)
+summary(mod8)
+
+mod9 <- glm(Churn ~ OnlineSecurity, data=train, family=binomial)
+summary(mod9)
+
+mod10 <- glm(Churn ~ OnlineBackup, data=train, family=binomial)
+summary(mod10)
+
+mod11 <- glm(Churn ~ DeviceProtection, data=train, family=binomial)
+summary(mod11)
+
+mod12 <- glm(Churn ~ TechSupport, data=train, family=binomial)
+summary(mod12)
+
+mod13 <- glm(Churn ~ StreamingTV, data=train, family=binomial)
+summary(mod13)
+
+mod14 <- glm(Churn ~ StreamingMovies, data=train, family=binomial)
+summary(mod14)
+
+mod15 <- glm(Churn ~ Contract, data=train, family=binomial)
+summary(mod15)
+
+mod16 <- glm(Churn ~ PaperlessBilling, data=train, family=binomial)
+summary(mod16)
+
+mod17 <- glm(Churn ~ PaymentMethod, data=train, family=binomial)
+summary(mod17)
+
+mod18 <- glm(Churn ~ MonthlyCharges, data=train, family=binomial)
+summary(mod18)
+
+mod19 <- glm(Churn ~ TotalCharges, data=train, family=binomial)
+summary(mod19)
+```
+
+
+```{r}
+
+md <- glm(Churn ~ gender+SeniorCitizen+Partner+Dependents+tenure+PhoneService+MultipleLines+InternetService+OnlineSecurity+OnlineBackup+DeviceProtection+TechSupport+StreamingTV+StreamingMovies+Contract+PaperlessBilling+PaymentMethod+MonthlyCharges+TotalCharges, data=train, family=binomial)
+summary(md)
+```
+
+
+
+```{r}
+#md <- glm(Churn ~ ., data = df, family = binomial)
+#summary(md)
+```
 
 
 
