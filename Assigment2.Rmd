@@ -17,8 +17,8 @@ library(car)
 
 # Load dataset
 ```{r}
-#setwd("/Users/ali/Desktop/MASTER/SIM/proj2")
-setwd("C:/Users/Brunil/Desktop/Bruna/Master/SIM/assignment_2")
+setwd("/Users/ali/Desktop/MASTER/SIM/proj2")
+#setwd("C:/Users/Brunil/Desktop/Bruna/Master/SIM/assignment_2")
 df<-read.csv("customer.xls", sep=",")
 ```
 
@@ -45,12 +45,11 @@ In total, we have 21 variables related to demographic, services, and accountant 
 Is a binary variable (female/male). 
 ```{r}
 sum(is.na(df$gender))
-table(df$gender)
-barplot(table(df$gender), main = "Distribution of gender",xlab = "Gender",col = "skyblue")
+barplot(table(df$gender), main = "Distribution of gender",xlab = "Gender",col = "skyblue") 
 ```
 
 #### 3. SeniorCitizen
-Is a binary variable, YES/NO. 
+It is a binary variable. Levels: 1(=yes)/0(=no). 
 ```{r}
 sum(is.na(df$SeniorCitizen))
 table(df$SeniorCitizen)
@@ -82,11 +81,11 @@ It is a numerical variable that indicates the duration, in months, that the cust
 ```{r}
 summary(df$tenure)
 hist(df$tenure,breaks=20, col="skyblue")
+min(df$tenure)
 ```
 
-Outliers
+Let's look for the *outliers*. 
 ```{r}
-summary(is.na(df)) #no NA
 boxplot(df$tenure, main="Outlier analysis for Tenure")
 
 sm_t <- summary(df$tenure)
@@ -100,57 +99,59 @@ length(which(df$tenure > mild_ub_t | df$tenure < mild_lb_t)) # number of mild ou
 severe_ub_t <- sm_t["3rd Qu."] + 3 * iqr_t
 severe_lb_t <- sm_t["1st Qu."] - 3 * iqr_t
 length(which(df$tenure > severe_ub_t | df$tenure < severe_lb_t)) # number of severe outliers
-
-#no tenim outliers
-
 ```
+There are *no mild nor severe outliers* in Tenure. 
 
 #### 7. PhoneService 
 It is a binary variable. Levels: Yes/No. 
 ```{r}
 sum(is.na(df$PhoneService))
 table(df$PhoneService)
-barplot(table(df$PhoneService), main = "Distribution of PhoneService",xlab = "PhoneService",col = "skyblue")
+barplot(table(df$PhoneService), main = "Distribution of PhoneService",xlab = "PhoneService",col = "skyblue") #unbalanced
 ```
 
 #### 8. MultipleLines
-It is a binary variable. Levels: Yes/No. 
+Categorical variable with 3 levels, No/No phone service/Yes. 
 ```{r}
 sum(is.na(df$MultipleLines))
 table(df$MultipleLines)
+barplot(table(df$MultipleLines), main = "Distribution of MultipleLines",xlab = "MultipleLines",col = "skyblue") #unbalanced
 ```
 
+Check inconsistencies: 
+- Cannot happen that a costumer has not phoneservice and multiplelines.
 ```{r}
-# check inconsistencies
 subset(df, MultipleLines == "Yes" & PhoneService == "No") 
 ```
 
 
 #### 9. InternetService
-It is a binary variable. Levels: Yes/No. 
-
+Categorical variable with 3 levels: DSL/Fiber optic/No. 
 ```{r}
 table(df$InternetService)
+barplot(table(df$InternetService), main = "Distribution of InternetService",xlab = "InternetService",col = "skyblue") 
 ```
 
 #### 10. OnlineSecurity
-It is a factor variable with 3 levels: 
+Categorical variable with 3 levels: No/No internet service/Yes 
 ```{r}
 table(df$OnlineSecurity)
+barplot(table(df$OnlineSecurity), main = "Distribution of OnlineSecurity",xlab = "OnlineSecurity",col = "skyblue") 
 ```
 
-```{r}
 # Check concistency
+```{r}
 sum(df$InternetService == "No")
 sum(df$OnlineSecurity == "No internet service")
+nrow(subset(df, InternetService == "No" & OnlineSecurity == "No internet service"))
 ```
 
 
 #### 11. OnlineBackup
-
-It is a factor variable with 3 levels:
+Categorical variable with 3 levels: No/No internet service/Yes 
 ```{r}
 table(df$OnlineBackup)
+barplot(table(df$OnlineBackup), main = "Distribution of OnlineBackup",xlab = "OnlineBackup",col = "skyblue") 
 ```
 
 ```{r}
@@ -160,11 +161,10 @@ sum(df$OnlineSecurity == "No internet service") #1526
 ```
 
 #### 12. DeviceProtection
-
-It is a factor variable with 3 levels:
-
+Categorical variable with 3 levels: No/No internet service/Yes 
 ```{r}
 table(df$DeviceProtection)
+barplot(table(df$DeviceProtection), main = "Distribution of DeviceProtection",xlab = "DeviceProtection",col = "skyblue") 
 ```
 
 
@@ -175,62 +175,76 @@ sum(df$DeviceProtection == "No internet service") #1526
 ```
 
 #### 13. TechSupport
-
-It is a factor variable with 3 levels:
-
+Categorical variable with 3 levels: No/No internet service/Yes 
 ```{r}
 table(df$TechSupport)
+barplot(table(df$TechSupport), main = "Distribution of TechSupport",xlab = "TechSupport",col = "skyblue") 
 ```
+
 ```{r}
 #Check consistency
-
 sum(df$DeviceProtection == "No internet service") #1526
 sum(df$TechSupport == "No internet service") #1526
 ```
 
 #### 14. StreamingTV
-
-It is a factor variable with 3 levels:
-
+Categorical variable with 3 levels: No/No internet service/Yes 
 ```{r}
 table(df$StreamingTV)
+barplot(table(df$StreamingTV), main = "Distribution of StreamingTV",xlab = "StreamingTV",col = "skyblue") 
 ```
+
 ```{r}
 #Check consistency
 sum(df$TechSupport == "No internet service") #1526
 sum(df$StreamingTV == "No internet service") #1526
 ```
 #### 15. StreamingMovies
+Categorical variable with 3 levels: No/No internet service/Yes 
 ```{r}
 table(df$StreamingMovies)
+barplot(table(df$StreamingMovies), main = "Distribution of StreamingMovies",xlab = "StreamingMovies",col = "skyblue")
 ```
 
 ```{r}
 #Check consistency
-
 sum(df$StreamingTV == "No internet service") #1526
 sum(df$StreamingMovies == "No internet service") #1526
-
 ```
 
 
 ### Customer account data
 #### 16. Contract
-
-#### 17. PaperlessBilling
-Is a binary variable. 
-
-#### 18. PaymentMethod
-Is a factor variable with 4 levels: 
-
-#### 19. MonthlyCharges (numeric)
-
+Categorical variable with 3 levels: Month-to-month/One year/Two year 
 ```{r}
-summary(df$MonthlyCharges)
-hist(df$MonthlyCharges,breaks=20)
+table(df$Contract)
+barplot(table(df$Contract), main = "Distribution of Contract",xlab = "Contract",col = "skyblue")
 ```
 
+#### 17. PaperlessBilling
+It is a binary variable. Levels: No/Yes
+```{r}
+table(df$PaperlessBilling)
+barplot(table(df$PaperlessBilling), main = "Distribution of PaperlessBilling",xlab = "PaperlessBilling",col = "skyblue")
+```
 
+#### 18. PaymentMethod
+Categorical variable with 4 levels: Bank transfer (automatic)/Credit card (automatic)/Electronic check/Mailed check
+```{r}
+table(df$PaymentMethod)
+barplot(table(df$PaymentMethod), main = "Distribution of PaymentMethod",xlab = "PaymentMethod",col = "skyblue")
+```
+
+Check inconsistencies: 
+
+#### 19. MonthlyCharges 
+It is a numerical variable.
+```{r}
+summary(df$MonthlyCharges)
+hist(df$MonthlyCharges,breaks=20,col="skyblue")
+```
+
+Let's look for *outliers*. 
 ```{r}
 Boxplot(df$MonthlyCharges, main="Outlier analysis for MonthlyCharges")
 sm <- summary(df$MonthlyCharges)
@@ -246,18 +260,18 @@ severe_lb <- sm["1st Qu."] - 3 * iqr
 length(which(df$MonthlyCharges > severe_ub | df$MonthlyCharges < severe_lb)) # number of severe outliers
 
 ```
-
+There are no mild nor severe outliers in MonthlyCharges.
 
 #### 20. TotalCharges (numeric)
 
-
-
+It is a numerical variable.
 ```{r}
 summary(df$TotalCharges)
-hist(df$TotalCharges,breaks=20)
+sum(is.na(df$TotalCharges))
+hist(df$TotalCharges,breaks=20,col="skyblue")
 ```
 
-
+Let's look for *outliers*.
 ```{r}
 Boxplot(df$TotalCharges, main="Outlier analysis for TotalCharges")
 sm <- summary(df$TotalCharges)
@@ -273,16 +287,16 @@ severe_lb <- sm["1st Qu."] - 3 * iqr
 length(which(df$TotalCharges > severe_ub | df$TotalCharges < severe_lb)) # number of severe outliers
 
 ```
-
-
-Imputation for NA values (ho vols fer aquí o més endavant? com és l'única variable amb NA)
-```{r}
-
-```
+There are no mild nor severe outliers.
 
 ### Target: 
 #### 21. Churn
-It is the target variable. It is binary, describes whether the customer churned or not (Yes or No). 
+It is the target variable. It is binary, describes whether the customer churned or not (Yes or No). ?explicar que es churn una mica. 
+```{r}
+table(df$Churn)
+prop.table(table(df$Churn))
+barplot(table(df$Churn), col="skyblue")
+```
 
 
 ## Data preprocessing
@@ -336,6 +350,12 @@ summary(is.na(df$TotalCharges))
 Això crec que és un pas que està descrit al pdf però no sé perquè s'ha de fer
 
 Create variable adding the total number missing values, outliers and errors. Describe these variables, to which other variables exist higher associations.  Compute the correlation with all other variables. Rank these variables according the correlation  Compute for every group of individuals (group of age, size of town, singles, married, …) the mean of missing/outliers/errors values. Rank the groups according the computed mean. 
+
+### Profiling 
+
+```{r}
+
+```
 
 
 ###Modelling
