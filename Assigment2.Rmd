@@ -13,6 +13,7 @@ editor_options:
 ```{r}
 library(skimr)
 library(car)
+library(FactoMineR)
 ```
 
 # Load dataset
@@ -351,10 +352,23 @@ Això crec que és un pas que està descrit al pdf però no sé perquè s'ha de 
 
 Create variable adding the total number missing values, outliers and errors. Describe these variables, to which other variables exist higher associations.  Compute the correlation with all other variables. Rank these variables according the correlation  Compute for every group of individuals (group of age, size of town, singles, married, …) the mean of missing/outliers/errors values. Rank the groups according the computed mean. 
 
+### Correlation btween numericals
+(no cal)
+```{r}
+num_cols <- which(sapply(df, is.numeric))
+cor(df[,c(6,19,20)])
+
+```
+
+
 ### Profiling 
 
 ```{r}
-
+res.cat=catdes(df, 21)
+res.cat$test.chi2
+res.cat$category
+res.cat$quanti.var
+res.cat$quanti
 ```
 
 
