@@ -18,8 +18,8 @@ library(FactoMineR)
 
 # Load dataset
 ```{r}
-setwd("/Users/ali/Desktop/MASTER/SIM/proj2")
-#setwd("C:/Users/Brunil/Desktop/Bruna/Master/SIM/assignment_2")
+#setwd("/Users/ali/Desktop/MASTER/SIM/proj2")
+setwd("C:/Users/Brunil/Desktop/Bruna/Master/SIM/assignment_2")
 df<-read.csv("customer.xls", sep=",")
 ```
 
@@ -371,6 +371,20 @@ res.cat$quanti.var
 res.cat$quanti
 ```
 
+Regarding to the results of the test $Chi^2$ all correlations with the variables
+are significant since the $p-value$ is less than 0,05.
+Since the response variable is binary, we have different results for each answer and also for all outcomes of the categorical parameters.
+
+For example, we can analyse in detail the variable "Contract". For the customers that haven't churned, the correlation between the ones that have a contract of two year is directly proportional and it's the highest relation. However, we can see that is the costumer has churned the ones that have a two-year contract have an strong negative correlation. The ones that have a month-to-month contract are the opposite of the previous answer; they have the highest positive correlation with the costumers that have churned and the negative with the ones that haven't.
+
+Besides the latter variable, we can observe the parameter that have a higher positive correlation with the costumers that churn is the parameter "OnlineSecurity" and "TechSupport" when the answer is "No". The parameters that have a negative relation with the costumers that churn are when they haven't hired an Internet Service. We can see that all parameters that have an answer that is "No internet service" have also a negative relation with the response variable "Yes". We can deduce that they might have multicollinearity with the parameter Internet Service, but we will check it later.
+
+The parameters that have a higher positive relation with the costumers that don't churn are the ones that have a negative relation when the response variable is "Yes", that we have analysed before. In the same vein, we can observe that the parameters that have a negative relation with the costumers that churn are "OnlineSecurity" and "TechSupport" when the answer is "No", the same parameters that have a positive relation when the costumers churn. We can see that the target answer "Yes" and "No" have an approximate opposite correlations with the explanatory variables.
+
+
+
+
+
 
 ###Modelling
 
@@ -465,19 +479,134 @@ summary(mod19)
 
 md <- glm(Churn ~ gender+SeniorCitizen+Partner+Dependents+tenure+PhoneService+MultipleLines+InternetService+OnlineSecurity+OnlineBackup+DeviceProtection+TechSupport+StreamingTV+StreamingMovies+Contract+PaperlessBilling+PaymentMethod+MonthlyCharges+TotalCharges, data=train, family=binomial)
 summary(md)
-```
 
 
-
-```{r}
+str(train)
+summary(train)
 #md <- glm(Churn ~ ., data = df, family = binomial)
 #summary(md)
 ```
 
+Variables that contain "No internet service as a response":
+
+MultipleLines
+OnlineSecurity
+OnlineBackup
+DeviceProtection
+TechSupport
+StreamingTV
+StreamingMovies
+
+##Model with InternetService = Yes (DSL;Fiber Optic)
+
+Out of the model InternetService 
+
+```{r}
+train_IS <- train[train$InternetService!="No",]
+
+attach(train_IS)
+
+summary(train_IS)
+
+md_2 <- glm(Churn ~ gender+SeniorCitizen+Partner+Dependents+tenure+PhoneService+MultipleLines+OnlineSecurity+OnlineBackup+DeviceProtection+TechSupport+StreamingTV+StreamingMovies+Contract+PaperlessBilling+PaymentMethod+MonthlyCharges+TotalCharges, data=train_IS, family=binomial)
+summary(md_2)
+
+```
 
 
 
+Out of the model: No internet service as a response for 
 
+```{r}
+md2 <- glm(Churn ~ gender+SeniorCitizen+Partner+Dependents+tenure+PhoneService+MultipleLines+OnlineSecurity+OnlineBackup+DeviceProtection+TechSupport+StreamingTV+StreamingMovies+Contract+PaperlessBilling+PaymentMethod+MonthlyCharges+TotalCharges, data=train, family=binomial)
+
+summary(md2)
+```
+
+CREC QUE ES LA MILLOR SOLUCIO
+
+Transforming "No Internet Service" into "No" since if we keep the parameter "InternetService" we already have the information and "No phone service" to "No" since the information is contained in "PhoneService".
+
+MultipleLines
+OnlineSecurity
+OnlineBackup
+DeviceProtection
+TechSupport
+StreamingTV
+StreamingMovies
+
+```{r}
+
+train$OnlineSecurity[train$OnlineSecurity=="No internet service"] <- "No"
+train$OnlineBackup[train$OnlineBackup=="No internet service"] <- "No"
+train$DeviceProtection[train$DeviceProtection=="No internet service"] <- "No"
+train$TechSupport[train$TechSupport=="No internet service"] <- "No"
+train$StreamingTV[train$StreamingTV=="No internet service"] <- "No"
+train$StreamingMovies[train$StreamingMovies=="No internet service"] <- "No"
+
+train$MultipleLines[train$MultipleLines=="No phone service"] <- "No"
+summary(train)
+```
+
+
+##Model after transformations
+
+```{r}
+md <- glm(Churn ~ gender+SeniorCitizen+Partner+Dependents+tenure+PhoneService+MultipleLines+InternetService+OnlineSecurity+OnlineBackup+DeviceProtection+TechSupport+StreamingTV+StreamingMovies+Contract+PaperlessBilling+PaymentMethod+MonthlyCharges+TotalCharges, data=train, family=binomial)
+summary(md)
+```
+
+We keep the parameters that are significant for the model:
+
+SeniorCitizen
+tenure
+MultipleLines
+InternetService
+Contract
+PaymentMethod
+TotalCharges
+
+StreamingTV and StreamingMovies are almost significant. We may try to add it with some transformation or with less noise caused by the other parameters.
+
+```{r}
+md_2 <- glm(Churn ~ SeniorCitizen+tenure+MultipleLines+InternetService+StreamingTV+StreamingMovies+Contract+PaymentMethod+TotalCharges, data=train, family=binomial)
+summary(md_2)
+
+md_3 <- glm(Churn ~ SeniorCitizen+tenure+MultipleLines+InternetService+StreamingTV+Contract+PaymentMethod+TotalCharges, data=train, family=binomial)
+summary(md_3)
+
+anova(md_2, md_3, test="Chisq")
+```
+
+StreamingTV is significant now, but StreamingMovies no, we can descart this last one. We have applied an anova test for confirming that we don't need StreamingMovies. 
+
+```{r}
+md_aic <- step(md)
+
+md_3_aix <- step(md_3)
+
+```
+ PhoneService      1   4083.0 4121.0
+- Dependents        1   4083.0 4121.0
+- OnlineBackup      1   4083.1 4121.1
+- DeviceProtection  1   4084.7 4122.7
+- SeniorCitizen     1   4085.4 4123.4
+- PaperlessBilling  1   4090.7 4128.7
+- PaymentMethod     3   4102.1 4136.1
+- TotalCharges      1   4099.8 4137.8
+- StreamingMovies   1   4099.9 4137.9
+- MonthlyCharges    1   4102.1 4140.1
+- StreamingTV       1   4104.9 4142.9
+- MultipleLines     1   4105.2 4143.2
+- InternetService   2   4129.3 4165.3
+- Contract          2   4145.0 4181.0
+- tenure            1   
+
+```{r}
+md_step <- glm(Churn ~ PhoneService + Dependents + OnlineBackup + DeviceProtection + SeniorCitizen + PaperlessBilling + PaymentMethod + TotalCharges + StreamingMovies + MonthlyCharges + StreamingTV + MultipleLines + InternetService + Contract + tenure, data = train, family=binomial)
+
+summary(md_step)
+```
 
 
 
