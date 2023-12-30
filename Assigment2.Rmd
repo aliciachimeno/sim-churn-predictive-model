@@ -14,12 +14,14 @@ editor_options:
 library(skimr)
 library(car)
 library(FactoMineR)
+library(dplyr)
+
 ```
 
 # Load dataset
 ```{r}
-#setwd("/Users/ali/Desktop/MASTER/SIM/proj2")
-setwd("C:/Users/Brunil/Desktop/Bruna/Master/SIM/assignment_2")
+setwd("/Users/ali/Desktop/MASTER/SIM/proj2")
+#setwd("C:/Users/Brunil/Desktop/Bruna/Master/SIM/assignment_2")
 df<-read.csv("customer.xls", sep=",")
 ```
 
@@ -357,9 +359,57 @@ Create variable adding the total number missing values, outliers and errors. Des
 ```{r}
 num_cols <- which(sapply(df, is.numeric))
 cor(df[,c(6,19,20)])
-
 ```
 
+### Correlation between categorical
+```{r}
+
+categorical_var_names <- names(df)[categorical_vars]
+
+# Create an empty matrix to store Cramér's V values
+cramer_matrix <- matrix(NA, nrow = length(categorical_var_names), ncol = length(categorical_var_names), dimnames = list(categorical_var_names, categorical_var_names))
+
+for (i in seq_along(categorical_var_names)) {
+  for (j in seq_along(categorical_var_names)) {
+    # Create contingency table
+    contingency_table <- table(df[[categorical_var_names[i]]], df[[categorical_var_names[j]]])
+    
+    # Calculate Cramér's V
+    chi_square_stat <- chisq.test(contingency_table)$statistic
+    n <- sum(contingency_table)
+    k <- min(dim(contingency_table))
+    cramers_v <- sqrt(chi_square_stat / (n * (k - 1)))
+    
+    # Store Cramér's V in the matrix
+    cramer_matrix[i, j] <- cramers_v
+  }
+}
+
+print(cramer_matrix)
+
+threshold <- 0.8
+
+# Find the indices of elements greater than the threshold
+indices <- which(cramer_matrix > threshold, arr.ind = TRUE)
+
+# Extract variable pairs and their corresponding Cramér's V values
+selected_pairs <- data.frame(
+  Variable1 = rownames(cramer_matrix)[indices[, 1]],
+  Variable2 = colnames(cramer_matrix)[indices[, 2]],
+  Cramers_V = cramer_matrix[indices]
+)
+
+# Display selected pairs
+print(selected_pairs)
+```
+
+The categorical variables MultipleLines and PhoneService are 100% correlated. 
+```{r}
+contingency_table<-table(df$MultipleLines,df$PhoneService)
+sqrt(chisq.test(contingency_table)$statistic / (sum(contingency_table) * (min(dim(contingency_table)) - 1)))
+```
+
+### variables with near zero variance ?  
 
 ### Profiling 
 
@@ -405,15 +455,83 @@ test <- df[-train_d,]
 
 names(df)
 ```
+##############################################################
+Target variable is Churn. 
 
-Target variable is Churn
+We start the modeling by the null model.
+```{r}
+mod0 <- glm(Churn ~ 1, data=train, family=binomial)
+mod0$deviance
+```
+
+We continiue by adding the numerical variables and assessing the model.
+```{r}
+which(sapply(df, is.numeric))
+```
+
+We start by tenure
+```{r}
+mod1 <- glm(Churn ~ tenure, data=train, family=binomial)
+mod1$deviance;AIC(mod0,mod1) #summary(mod1)
+anova( mod0, mod1,  test="Chisq")
+```
+
+we use a second order variable
+```{r}
+mod1q <- glm(Churn ~ tenure + I(tenure^2), data=train, family=binomial)
+summary(mod1q)
+anova( mod1, mod1q,  test="Chisq")
+#residualPlots(mod1q); marginalModelPlots(mod1q)
+
+```
+
+
+Add MonthlyCharges 
+```{r}
+mod2 <- glm(Churn ~ tenure + I(tenure^2)+ MonthlyCharges, data=train, family=binomial)
+mod2$deviance
+anova( mod1, mod2,  test="Chisq")
+```
+
+consider interactions
+```{r}
+mod2i <- glm(Churn ~ (tenure + I(tenure^2) ) *MonthlyCharges, data=train, family=binomial)
+mod2i$deviance
+anova( mod2, mod2i,  test="Chisq")
+summary(mod2i)
+```
+
+Add TotalCharges
+
+```{r}
+mod3 <- glm(Churn ~ (tenure + I(tenure^2) ) *MonthlyCharges + TotalCharges, data=train, family=binomial)
+mod3$deviance  
+anova( mod2i, mod3,  test="Chisq")
+summary(mod3)
+```
+It is not significant enough. We don't add it in our model. 
+
+Now, we shall add the categorical variables. The order of addition is significant, therefore we start by adding the most correlated variables with the target. 
+We start with *Contract* variable. 
+```{r}
+mod4 <- glm(Churn ~ (tenure + I(tenure^2) ) *MonthlyCharges + Contract, data=train, family=binomial)
+summary(mod4)
+anova( mod2i, mod4,  test="Chisq")
+```
+
+```{r}
+mod5 <- glm(Churn ~ (tenure + I(tenure^2) ) *MonthlyCharges + Contract+StreamingMovies, data=train, family=binomial)
+summary(mod5)
+anova( mod4, mod5,  test="Chisq")
+```
+
+
 
 Això ho podem posar a l'annex i deixem els comentaris al report
 
 Univariate
 
 ```{r}
-attach(train)
 names(train)
 
 mod <- glm(Churn ~ gender, data=train, family=binomial)
@@ -474,12 +592,10 @@ mod19 <- glm(Churn ~ TotalCharges, data=train, family=binomial)
 summary(mod19)
 ```
 
-
 ```{r}
 
 md <- glm(Churn ~ gender+SeniorCitizen+Partner+Dependents+tenure+PhoneService+MultipleLines+InternetService+OnlineSecurity+OnlineBackup+DeviceProtection+TechSupport+StreamingTV+StreamingMovies+Contract+PaperlessBilling+PaymentMethod+MonthlyCharges+TotalCharges, data=train, family=binomial)
 summary(md)
-
 
 str(train)
 summary(train)
@@ -586,7 +702,7 @@ md_aic <- step(md)
 md_3_aix <- step(md_3)
 
 ```
- PhoneService      1   4083.0 4121.0
+- PhoneService      1   4083.0 4121.0
 - Dependents        1   4083.0 4121.0
 - OnlineBackup      1   4083.1 4121.1
 - DeviceProtection  1   4084.7 4122.7
@@ -607,18 +723,4 @@ md_step <- glm(Churn ~ PhoneService + Dependents + OnlineBackup + DeviceProtecti
 
 summary(md_step)
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
