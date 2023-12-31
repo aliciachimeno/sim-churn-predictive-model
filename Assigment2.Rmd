@@ -20,8 +20,8 @@ library(dplyr)
 
 # Load dataset
 ```{r}
-#setwd("/Users/ali/Desktop/MASTER/SIM/proj2")
-setwd("C:/Users/Brunil/Desktop/Bruna/Master/SIM/assignment_2")
+setwd("/Users/ali/Desktop/MASTER/SIM/proj2")
+#setwd("C:/Users/Brunil/Desktop/Bruna/Master/SIM/assignment_2")
 df<-read.csv("customer.xls", sep=",")
 ```
 
@@ -474,6 +474,7 @@ We start by *tenure*
 mod1 <- glm(Churn ~ tenure, data=train, family=binomial)
 mod1$deviance;AIC(mod0,mod1) #summary(mod1)
 anova( mod0, mod1,  test="Chisq")
+
 ```
 
 we use a second order variable
@@ -490,6 +491,7 @@ Add MonthlyCharges
 mod2 <- glm(Churn ~ tenure + I(tenure^2)+ MonthlyCharges, data=train, family=binomial)
 mod2$deviance
 anova( mod1, mod2,  test="Chisq")
+residualPlots(mod2)
 ```
 
 consider interactions
@@ -498,6 +500,7 @@ mod2i <- glm(Churn ~ (tenure + I(tenure^2) ) *MonthlyCharges, data=train, family
 mod2i$deviance
 anova( mod2, mod2i,  test="Chisq")
 summary(mod2i)
+residualPlots(mod2i)
 ```
 
 Add TotalCharges
@@ -508,6 +511,7 @@ mod3$deviance
 anova( mod2i, mod3,  test="Chisq")
 summary(mod3)
 vif(mod3)
+residualPlots(mod3)
 ```
 It is not significant enough. We don't add it in our model. We can also see that *TotalCHarges* has a high VIF, so it has high multicollinearity.
 
@@ -518,6 +522,7 @@ mod3.1$deviance
 anova( mod3, mod3.1,  test="Chisq")
 summary(mod3.1)
 vif(mod3.1)
+residualPlots(mod3.1)
 ```
 
 ```{r}
@@ -526,6 +531,7 @@ mod3.2$deviance
 anova( mod3.1, mod3.2,  test="Chisq")
 summary(mod3.2) #aic 4473.5
 vif(mod3.2)
+residualPlots(mod3.2)
 ```
 
 Better without $I(tenure^2)$, we improved the multicollinearity.
@@ -543,6 +549,7 @@ infl$infmat
 cooks.distance(mod3.2)
 sum(residuals(mod3.2,'deviance')^2)
 sum(residuals(mod3.2,'pearson')^2)
+
 ```
 
 
@@ -600,9 +607,9 @@ We start with *Contract* variable.
 ```{r}
 mod4 <- glm(Churn ~ tenure + MonthlyCharges + Contract, data=train, family=binomial)
 summary(mod4) #4302.2 better
-anova( mod3.2, mod4,  test="Chisq") #significative
+anova( mod3.2, mod4,  test="Chisq") #significant
 vif(mod4)
-
+residualPlots(mod4)
 ```
 We add the parameter because it improves the model.
 
@@ -614,6 +621,7 @@ mod5 <- glm(Churn ~ tenure + MonthlyCharges + Contract + InternetService, data=t
 summary(mod5) #4254.1 better
 anova( mod4, mod5,  test="Chisq") #significant
 vif(mod5)
+residualPlots(mod5)
 ```
 
 
@@ -624,6 +632,7 @@ mod6 <- glm(Churn ~ tenure + MonthlyCharges + Contract + InternetService + Strea
 summary(mod6) #4238.6 better
 anova( mod5, mod6,  test="Chisq") #significant
 vif(mod6)
+residualPlots(mod6)
 ```
 The model has improved but the VIF is becoming higher.
 
@@ -634,6 +643,7 @@ mod7 <- glm(Churn ~ tenure + MonthlyCharges + Contract + InternetService + Strea
 summary(mod7) #4213.5 better
 anova( mod6, mod7,  test="Chisq") #significant
 vif(mod7)
+residualPlots(mod7)[01]
 ```
 
 *MonthlyCharges* has a high VIF. We'll may need to add transformations or maybe discard this parameter. For now, we'll keep the parameters that we have been adding.
@@ -813,7 +823,7 @@ deviance(ngm4)-deviance(ngm6)
 ```
 
 
-Having both interactions improves the model but VIF gets worse. The best mdoel is with SeniorCitizen and PaymentMethod interaction (mod21)
+Having both interactions improves the model but VIF gets worse. The best model is with SeniorCitizen and PaymentMethod interaction (mod21)
 
 
 ##Second Order variable
