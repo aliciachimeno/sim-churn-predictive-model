@@ -20,8 +20,8 @@ library(dplyr)
 
 # Load dataset
 ```{r}
-setwd("/Users/ali/Desktop/MASTER/SIM/proj2")
-#setwd("C:/Users/Brunil/Desktop/Bruna/Master/SIM/assignment_2")
+#setwd("/Users/ali/Desktop/MASTER/SIM/proj2")
+setwd("C:/Users/Brunil/Desktop/Bruna/Master/SIM/assignment_2")
 df<-read.csv("customer.xls", sep=",")
 ```
 
@@ -371,6 +371,7 @@ sqrt(chisq.test(contingency_table)$statistic / (sum(contingency_table) * (min(di
 contingency_table<-table(df$StreamingTV,df$InternetService)
 contingency_table<-table(df$OnlineSecurity,df$InternetService)
 
+contingency_table
 
 OnlineBackup
 DeviceProtection
@@ -389,6 +390,9 @@ res.cat$category
 res.cat$quanti.var
 res.cat$quanti
 ```
+
+
+
 
 Regarding to the results of the test $Chi^2$ all correlations with the variables
 are significant since the $p-value$ is less than 0,05.
@@ -422,15 +426,15 @@ We observe that they contain "No internet service" as a response. We have a vari
 
 
 ```{r}
-train$OnlineSecurity[train$OnlineSecurity=="No internet service"] <- "No"
-train$OnlineBackup[train$OnlineBackup=="No internet service"] <- "No"
-train$DeviceProtection[train$DeviceProtection=="No internet service"] <- "No"
-train$TechSupport[train$TechSupport=="No internet service"] <- "No"
-train$StreamingTV[train$StreamingTV=="No internet service"] <- "No"
-train$StreamingMovies[train$StreamingMovies=="No internet service"] <- "No"
+df$OnlineSecurity[df$OnlineSecurity=="No internet service"] <- "No"
+df$OnlineBackup[df$OnlineBackup=="No internet service"] <- "No"
+df$DeviceProtection[df$DeviceProtection=="No internet service"] <- "No"
+df$TechSupport[df$TechSupport=="No internet service"] <- "No"
+df$StreamingTV[df$StreamingTV=="No internet service"] <- "No"
+df$StreamingMovies[df$StreamingMovies=="No internet service"] <- "No"
 ### aqui el phone falta explicar
-train$MultipleLines[train$MultipleLines=="No phone service"] <- "No"
-summary(train)
+df$MultipleLines[df$MultipleLines=="No phone service"] <- "No"
+summary(df)
 ```
 
 
@@ -477,8 +481,7 @@ we use a second order variable
 mod1q <- glm(Churn ~ tenure + I(tenure^2), data=train, family=binomial)
 summary(mod1q)
 anova( mod1, mod1q,  test="Chisq")
-#residualPlots(mod1q); marginalModelPlots(mod1q)
-
+residualPlots(mod1q); marginalModelPlots(mod1q)
 ```
 
 
@@ -504,22 +507,336 @@ mod3 <- glm(Churn ~ (tenure + I(tenure^2) ) *MonthlyCharges + TotalCharges, data
 mod3$deviance  
 anova( mod2i, mod3,  test="Chisq")
 summary(mod3)
+vif(mod3)
 ```
-It is not significant enough. We don't add it in our model. 
+It is not significant enough. We don't add it in our model. We can also see that *TotalCHarges* has a high VIF, so it has high multicollinearity.
+
+
+```{r}
+mod3.1 <- glm(Churn ~ (tenure + I(tenure^2) ) + MonthlyCharges , data=train, family=binomial)
+mod3.1$deviance  
+anova( mod3, mod3.1,  test="Chisq")
+summary(mod3.1)
+vif(mod3.1)
+```
+
+```{r}
+mod3.2 <- glm(Churn ~ tenure + MonthlyCharges , data=train, family=binomial)
+mod3.2$deviance  
+anova( mod3.1, mod3.2,  test="Chisq")
+summary(mod3.2) #aic 4473.5
+vif(mod3.2)
+```
+
+Better without $I(tenure^2)$, we improved the multicollinearity.
+
+
+##Overdispersion
+
+
+
+##Inlfuential data
+```{r}
+infl <- influence.measures(mod3.2)
+infl$infmat
+
+cooks.distance(mod3.2)
+sum(residuals(mod3.2,'deviance')^2)
+sum(residuals(mod3.2,'pearson')^2)
+```
+
+
+
+
+```{r}
+res_3.2 <- mod3.2$residuals
+
+# Plotting a histogram of residuals
+hist(res_3.2, main = "Histogram of Residuals", xlab = "Residuals")
+
+# Q-Q plot for normality
+qqnorm(res_3.2)
+qqline(res_3.2)
+
+# Calculate Cook's distance
+cd_m3.2 <- cooks.distance(mod3.2)
+
+# Plot Cook's distance
+plot(cd_m3.2, pch = "18", main = "Cook's Distance Plot")
+abline(h = 4/(length(mod3.2$coefficients) - 1), col = "red")
+
+#Check homoscedasticity (constant variance of residuals) by plotting residuals against fitted values:
+
+# Plotting residuals against fitted values
+
+plot(fitted(mod3.2), res_3.2, pch = 16, main = "Residuals vs. Fitted Values", xlab = "Fitted Values", ylab = "Residuals")
+```
+
+
+
+##Categorical Variables
 
 Now, we shall add the categorical variables. The order of addition is significant, therefore we start by adding the most correlated variables with the target. 
+
+Contract
+InternetService
+StreamingMovies
+StreamingTV
+TechSupport
+DeviceProtection
+OnlineBackup
+OnlineSecurity
+PaperlessBilling
+Dependents
+MultipleLines
+SeniorCitizen
+Partner
+PaymentMethod
+PhoneService
+
+#Contract
+
 We start with *Contract* variable. 
 ```{r}
-mod4 <- glm(Churn ~ (tenure + I(tenure^2) ) *MonthlyCharges + Contract, data=train, family=binomial)
-summary(mod4)
-anova( mod2i, mod4,  test="Chisq")
+mod4 <- glm(Churn ~ tenure + MonthlyCharges + Contract, data=train, family=binomial)
+summary(mod4) #4302.2 better
+anova( mod3.2, mod4,  test="Chisq") #significative
+vif(mod4)
+
+```
+We add the parameter because it improves the model.
+
+#InternetService
+
+
+```{r}
+mod5 <- glm(Churn ~ tenure + MonthlyCharges + Contract + InternetService, data=train, family=binomial)
+summary(mod5) #4254.1 better
+anova( mod4, mod5,  test="Chisq") #significant
+vif(mod5)
+```
+
+
+#StreamingMovies
+
+```{r}
+mod6 <- glm(Churn ~ tenure + MonthlyCharges + Contract + InternetService + StreamingMovies, data=train, family=binomial)
+summary(mod6) #4238.6 better
+anova( mod5, mod6,  test="Chisq") #significant
+vif(mod6)
+```
+The model has improved but the VIF is becoming higher.
+
+#StreamingTV
+
+```{r}
+mod7 <- glm(Churn ~ tenure + MonthlyCharges + Contract + InternetService + StreamingMovies + StreamingTV, data=train, family=binomial)
+summary(mod7) #4213.5 better
+anova( mod6, mod7,  test="Chisq") #significant
+vif(mod7)
+```
+
+*MonthlyCharges* has a high VIF. We'll may need to add transformations or maybe discard this parameter. For now, we'll keep the parameters that we have been adding.
+
+#TechSupport
+
+```{r}
+mod8 <- glm(Churn ~ tenure + MonthlyCharges + Contract + InternetService + StreamingMovies + StreamingTV + TechSupport, data=train, family=binomial)
+summary(mod8) #4208.3 better
+anova( mod7, mod8,  test="Chisq") #significant
+vif(mod8)
+```
+
+#DeviceProtection
+
+```{r}
+mod9 <- glm(Churn ~ tenure + MonthlyCharges + Contract + InternetService + StreamingMovies + StreamingTV + TechSupport + DeviceProtection, data=train, family=binomial)
+summary(mod9) #4209.3 worse
+anova( mod8, mod9,  test="Chisq") #not significant
+
+```
+
+We don't add the parameter to the model. It does not improve it.
+
+
+#OnlineBackup
+
+```{r}
+mod10 <- glm(Churn ~ tenure + MonthlyCharges + Contract + InternetService + StreamingMovies + StreamingTV + TechSupport + OnlineBackup, data=train, family=binomial)
+summary(mod10) #4209.6 worse
+anova( mod8, mod10,  test="Chisq") #not significant
+```
+We don't add the parameter to the model. It does not improve it.
+
+#OnlineSecurity
+
+```{r}
+mod11 <- glm(Churn ~ tenure + MonthlyCharges + Contract + InternetService + StreamingMovies + StreamingTV + TechSupport + OnlineSecurity, data=train, family=binomial)
+summary(mod11) #4199 better
+anova( mod8, mod11,  test="Chisq") #significant
+vif(mod11)
+#residualPlot(mod11)
+```
+
+We keep the parameter
+
+#PaperlessBilling
+
+```{r}
+mod12 <- glm(Churn ~ tenure + MonthlyCharges + Contract + InternetService + StreamingMovies + StreamingTV + TechSupport + OnlineSecurity + PaperlessBilling, data=train, family=binomial)
+summary(mod12) #4184.5 better
+anova( mod11, mod12,  test="Chisq") #significant
+vif(mod12)
+```
+
+We keep the parameter
+
+#Dependents
+
+```{r}
+mod13 <- glm(Churn ~ tenure + MonthlyCharges + Contract + InternetService + StreamingMovies + StreamingTV + TechSupport + OnlineSecurity + PaperlessBilling + Dependents, data=train, family=binomial)
+summary(mod13) #4177.2 better
+anova( mod12, mod13,  test="Chisq") #significant
+vif(mod13)
+```
+
+We keep the parameter
+
+#MultipleLines
+
+```{r}
+
+mod14 <- glm(Churn ~ tenure + MonthlyCharges + Contract + InternetService + StreamingMovies + StreamingTV + TechSupport + OnlineSecurity + PaperlessBilling + Dependents + MultipleLines, data=train, family=binomial)
+summary(mod14) #4162.2 better
+anova( mod13, mod14,  test="Chisq") #significant
+vif(mod14)
+
+```
+
+We keep the parameter
+
+#SeniorCitizen
+
+```{r}
+mod15 <- glm(Churn ~ tenure + MonthlyCharges + Contract + InternetService + StreamingMovies + StreamingTV + TechSupport + OnlineSecurity + PaperlessBilling + Dependents + MultipleLines + SeniorCitizen, data=train, family=binomial)
+summary(mod15) #4155.7 better
+anova( mod14, mod15,  test="Chisq") #significant
+vif(mod15)
+```
+
+We keep the parameter
+
+#Partner
+
+```{r}
+mod16 <- glm(Churn ~ tenure + MonthlyCharges + Contract + InternetService + StreamingMovies + StreamingTV + TechSupport + OnlineSecurity + PaperlessBilling + Dependents + MultipleLines + SeniorCitizen + Partner, data=train, family=binomial)
+summary(mod16) #4157.7 worse
+anova( mod15, mod16,  test="Chisq") #not significant
+```
+
+We don't keep the parameter
+
+#PaymentMethod
+
+```{r}
+mod17 <- glm(Churn ~ tenure + MonthlyCharges + Contract + InternetService + StreamingMovies + StreamingTV + TechSupport + OnlineSecurity + PaperlessBilling + Dependents + MultipleLines + SeniorCitizen + PaymentMethod, data=train, family=binomial)
+summary(mod17) #4139.4 better
+anova( mod15, mod17,  test="Chisq") #significant
+vif(mod17)
+```
+
+
+#PhoneService
+
+```{r}
+mod18 <- glm(Churn ~ tenure + MonthlyCharges + Contract + InternetService + StreamingMovies + StreamingTV + TechSupport + OnlineSecurity + PaperlessBilling + Dependents + MultipleLines + SeniorCitizen + PaymentMethod + PhoneService, data=train, family=binomial)
+summary(mod18) #4139.4 it does not change anything
+anova( mod17, mod18,  test="Chisq") #not significant
+```
+
+##Interactions
+
+```{r}
+str(train)
+```
+
+We need to search for interactions. Possible interactions:
+
+- Dependents and Multiple Lines
+
+```{r}
+mod19 <- glm(Churn ~ tenure + MonthlyCharges + Contract + InternetService + StreamingMovies + StreamingTV + TechSupport + OnlineSecurity + PaperlessBilling + Dependents * MultipleLines + SeniorCitizen + PaymentMethod, data=train, family=binomial)
+summary(mod19) #4140.4 worse
+anova( mod17, mod19,  test="Chisq") #not significant
+vif(mod19)
+```
+
+- MonthlyCharges and InternetService
+
+```{r}
+mod20 <- glm(Churn ~ tenure + InternetService * MonthlyCharges + Contract + StreamingMovies + StreamingTV + TechSupport + OnlineSecurity + PaperlessBilling + Dependents + MultipleLines + SeniorCitizen + PaymentMethod, data=train, family=binomial)
+summary(mod20) #4133.7 better
+anova( mod17, mod20,  test="Chisq") #significant
+vif(mod20)
+```
+
+We improved the model but multicolinearity worse ???
+???DUBTE pk apareixen les variables com si estiguessin tambe per separat i no nomes com una interaccio? A l'anterior model ens surt nomes la interaccio.
+
+
+- SeniorCitizen and PaymentMethod
+
+```{r}
+mod21 <- glm(Churn ~ tenure + InternetService + MonthlyCharges + Contract + StreamingMovies + StreamingTV + TechSupport + OnlineSecurity + PaperlessBilling + Dependents + MultipleLines + SeniorCitizen * PaymentMethod, data=train, family=binomial)
+summary(mod21) #4133 better and also better than mod20
+anova( mod17, mod21,  test="Chisq") #significant
+anova( mod20, mod21,  test="Chisq") #not significant
+vif(mod21) #better multicollinearity
+
+mod22 <- glm(Churn ~ tenure + InternetService * MonthlyCharges + Contract + StreamingMovies + StreamingTV + TechSupport + OnlineSecurity + PaperlessBilling + Dependents + MultipleLines + SeniorCitizen * PaymentMethod, data=train, family=binomial)
+summary(mod22) #4126.8 better
+
+anova( mod21, mod22,  test="Chisq") #significant
+anova( mod20, mod22,  test="Chisq") #significant
+
+vif(mod22)
 ```
 
 ```{r}
-mod5 <- glm(Churn ~ (tenure + I(tenure^2) ) *MonthlyCharges + Contract+StreamingMovies, data=train, family=binomial)
-summary(mod5)
-anova( mod4, mod5,  test="Chisq")
+
+
+deviance(ngm4);ngm4$df.residual
+deviance(ngm6);ngm6$df.residual
+deviance(ngm4)-deviance(ngm6)
+((deviance(ngm4)-deviance(ngm6))/6)/1.1678
+1-pf(1.533252,6,53)
 ```
+
+
+Having both interactions improves the model but VIF gets worse. The best mdoel is with SeniorCitizen and PaymentMethod interaction (mod21)
+
+
+##Second Order variable
+
+```{r}
+mod23 <- glm(Churn ~ tenure + I(tenure^2) + InternetService + MonthlyCharges + Contract + StreamingMovies + StreamingTV + TechSupport + OnlineSecurity + PaperlessBilling + Dependents + MultipleLines + SeniorCitizen * PaymentMethod, data=train, family=binomial)
+summary(mod23) #4088.4 better
+anova( mod21, mod23,  test="Chisq") #significant
+vif(mod23)
+```
+
+```{r}
+mod23.1 <- glm(Churn ~ tenure + I(tenure^2) + InternetService + Contract + StreamingMovies + StreamingTV + TechSupport + OnlineSecurity + PaperlessBilling + Dependents + MultipleLines + SeniorCitizen * PaymentMethod, data=train, family=binomial)
+summary(mod23.1) #4093.9 worse
+anova( mod23, mod23.1,  test="Chisq") #significant
+vif(mod23.1) #better vif
+```
+
+Removing *MonthlyCharges* from the model is getting a bit worse the AIC but the change is significant and it improves the VIF.
+
+
+
+
 
 
 #########################################################################################################################
@@ -590,145 +907,4 @@ summary(mod19)
 AIC(mod)
 ```
 #########################################################################################################################
-
-
-
-```{r}
-
-md <- glm(Churn ~ gender+SeniorCitizen+Partner+Dependents+tenure+PhoneService+MultipleLines+InternetService+OnlineSecurity+OnlineBackup+DeviceProtection+TechSupport+StreamingTV+StreamingMovies+Contract+PaperlessBilling+PaymentMethod+MonthlyCharges+TotalCharges, data=train, family=binomial)
-summary(md)
-
-str(train)
-summary(train)
-#md <- glm(Churn ~ ., data = df, family = binomial)
-#summary(md)
-```
-
-Variables that contain "No internet service as a response":
-
-MultipleLines
-OnlineSecurity
-OnlineBackup
-DeviceProtection
-TechSupport
-StreamingTV
-StreamingMovies
-
-##Model with InternetService = Yes (DSL;Fiber Optic)
-
-Out of the model InternetService 
-
-```{r}
-train_IS <- train[train$InternetService!="No",]
-
-attach(train_IS)
-
-summary(train_IS)
-
-md_2 <- glm(Churn ~ gender+SeniorCitizen+Partner+Dependents+tenure+PhoneService+MultipleLines+OnlineSecurity+OnlineBackup+DeviceProtection+TechSupport+StreamingTV+StreamingMovies+Contract+PaperlessBilling+PaymentMethod+MonthlyCharges+TotalCharges, data=train_IS, family=binomial)
-summary(md_2)
-
-```
-
-
-
-Out of the model: No internet service as a response for 
-
-```{r}
-md2 <- glm(Churn ~ gender+SeniorCitizen+Partner+Dependents+tenure+PhoneService+MultipleLines+OnlineSecurity+OnlineBackup+DeviceProtection+TechSupport+StreamingTV+StreamingMovies+Contract+PaperlessBilling+PaymentMethod+MonthlyCharges+TotalCharges, data=train, family=binomial)
-
-summary(md2)
-```
-
-CREC QUE ES LA MILLOR SOLUCIO
-
-Transforming "No Internet Service" into "No" since if we keep the parameter "InternetService" we already have the information and "No phone service" to "No" since the information is contained in "PhoneService".
-
-MultipleLines
-OnlineSecurity
-OnlineBackup
-DeviceProtection
-TechSupport
-StreamingTV
-StreamingMovies
-
-```{r}
-
-train$OnlineSecurity[train$OnlineSecurity=="No internet service"] <- "No"
-train$OnlineBackup[train$OnlineBackup=="No internet service"] <- "No"
-train$DeviceProtection[train$DeviceProtection=="No internet service"] <- "No"
-train$TechSupport[train$TechSupport=="No internet service"] <- "No"
-train$StreamingTV[train$StreamingTV=="No internet service"] <- "No"
-train$StreamingMovies[train$StreamingMovies=="No internet service"] <- "No"
-
-train$MultipleLines[train$MultipleLines=="No phone service"] <- "No"
-summary(train)
-```
-
-
-##Model after transformations
-
-```{r}
-md <- glm(Churn ~ gender+SeniorCitizen+Partner+Dependents+tenure+PhoneService+MultipleLines+InternetService+OnlineSecurity+OnlineBackup+DeviceProtection+TechSupport+StreamingTV+StreamingMovies+Contract+PaperlessBilling+PaymentMethod+MonthlyCharges+TotalCharges, data=train, family=binomial)
-summary(md)
-```
-
-We keep the parameters that are significant for the model:
-
-SeniorCitizen
-tenure
-MultipleLines
-InternetService
-Contract
-PaymentMethod
-TotalCharges
-
-StreamingTV and StreamingMovies are almost significant. We may try to add it with some transformation or with less noise caused by the other parameters.
-
-```{r}
-md_2 <- glm(Churn ~ SeniorCitizen+tenure+MultipleLines+InternetService+StreamingTV+StreamingMovies+Contract+PaymentMethod+TotalCharges, data=train, family=binomial)
-summary(md_2)
-
-md_3 <- glm(Churn ~ SeniorCitizen+tenure+MultipleLines+InternetService+StreamingTV+Contract+PaymentMethod+TotalCharges, data=train, family=binomial)
-summary(md_3)
-
-anova(md_2, md_3, test="Chisq")
-```
-
-StreamingTV is significant now, but StreamingMovies no, we can descart this last one. We have applied an anova test for confirming that we don't need StreamingMovies. 
-
-```{r}
-md_aic <- step(md)
-
-md_3_aix <- step(md_3)
-
-```
-- PhoneService      1   4083.0 4121.0
-- Dependents        1   4083.0 4121.0
-- OnlineBackup      1   4083.1 4121.1
-- DeviceProtection  1   4084.7 4122.7
-- SeniorCitizen     1   4085.4 4123.4
-- PaperlessBilling  1   4090.7 4128.7
-- PaymentMethod     3   4102.1 4136.1
-- TotalCharges      1   4099.8 4137.8
-- StreamingMovies   1   4099.9 4137.9
-- MonthlyCharges    1   4102.1 4140.1
-- StreamingTV       1   4104.9 4142.9
-- MultipleLines     1   4105.2 4143.2
-- InternetService   2   4129.3 4165.3
-- Contract          2   4145.0 4181.0
-- tenure            1   
-
-```{r}
-md_step <- glm(Churn ~ PhoneService + Dependents + OnlineBackup + DeviceProtection + SeniorCitizen + PaperlessBilling + PaymentMethod + TotalCharges + StreamingMovies + MonthlyCharges + StreamingTV + MultipleLines + InternetService + Contract + tenure, data = train, family=binomial)
-
-summary(md_step)
-```
-
-
-
-
-```{r}
-
-```
 
