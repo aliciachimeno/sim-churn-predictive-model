@@ -3,9 +3,10 @@ title: "Assigment 2"
 author: "Alícia Chimeno Sarabia and Bruna"
 date: "2023-12-02"
 output:
-  html_document: default
+  word_document: default
   pdf_document: default
-editor_options: 
+  html_document: default
+editor_options:
   chunk_output_type: console
 ---
 
@@ -15,13 +16,14 @@ library(skimr)
 library(car)
 library(FactoMineR)
 library(dplyr)
+library(caret)
 
 ```
 
 # Load dataset
 ```{r}
-setwd("/Users/ali/Desktop/MASTER/SIM/proj2")
-#setwd("C:/Users/Brunil/Desktop/Bruna/Master/SIM/assignment_2")
+#setwd("/Users/ali/Desktop/MASTER/SIM/proj2")
+setwd("C:/Users/Brunil/Desktop/Bruna/Master/SIM/assignment_2")
 df<-read.csv("customer.xls", sep=",")
 ```
 
@@ -372,12 +374,6 @@ contingency_table<-table(df$StreamingTV,df$InternetService)
 contingency_table<-table(df$OnlineSecurity,df$InternetService)
 
 contingency_table
-
-OnlineBackup
-DeviceProtection
-TechSupport
-StreamingTV
-StreamingMovies
 ```
 
 
@@ -477,106 +473,63 @@ anova( mod0, mod1,  test="Chisq")
 
 ```
 
-we use a second order variable
-```{r}
-mod1q <- glm(Churn ~ tenure + I(tenure^2), data=train, family=binomial)
-summary(mod1q)
-anova( mod1, mod1q,  test="Chisq")
-residualPlots(mod1q); marginalModelPlots(mod1q)
-```
-
 
 Add MonthlyCharges 
 ```{r}
-mod2 <- glm(Churn ~ tenure + I(tenure^2)+ MonthlyCharges, data=train, family=binomial)
+mod2 <- glm(Churn ~ tenure + MonthlyCharges, data=train, family=binomial)
 mod2$deviance
+summary(mod2) #4473.5
 anova( mod1, mod2,  test="Chisq")
-residualPlots(mod2)
+residualPlot(mod2)
 ```
 
-consider interactions
-```{r}
-mod2i <- glm(Churn ~ (tenure + I(tenure^2) ) *MonthlyCharges, data=train, family=binomial)
-mod2i$deviance
-anova( mod2, mod2i,  test="Chisq")
-summary(mod2i)
-residualPlots(mod2i)
-```
 
 Add TotalCharges
 
 ```{r}
-mod3 <- glm(Churn ~ (tenure + I(tenure^2) ) *MonthlyCharges + TotalCharges, data=train, family=binomial)
+mod3 <- glm(Churn ~ tenure + MonthlyCharges + TotalCharges, data=train, family=binomial)
 mod3$deviance  
-anova( mod2i, mod3,  test="Chisq")
-summary(mod3)
+anova( mod2, mod3,  test="Chisq") #significant
+summary(mod3) #4468.6
 vif(mod3)
-residualPlots(mod3)
+residualPlot(mod3)
 ```
-It is not significant enough. We don't add it in our model. We can also see that *TotalCHarges* has a high VIF, so it has high multicollinearity.
-
-
-```{r}
-mod3.1 <- glm(Churn ~ (tenure + I(tenure^2) ) + MonthlyCharges , data=train, family=binomial)
-mod3.1$deviance  
-anova( mod3, mod3.1,  test="Chisq")
-summary(mod3.1)
-vif(mod3.1)
-residualPlots(mod3.1)
-```
-
-```{r}
-mod3.2 <- glm(Churn ~ tenure + MonthlyCharges , data=train, family=binomial)
-mod3.2$deviance  
-anova( mod3.1, mod3.2,  test="Chisq")
-summary(mod3.2) #aic 4473.5
-vif(mod3.2)
-residualPlots(mod3.2)
-```
-
-Better without $I(tenure^2)$, we improved the multicollinearity.
-
-
-##Overdispersion
-
+It is significant enough but we can also see that *TotalCHarges* has a high VIF, so it has high multicollinearity. We decide to not include it in the model.
 
 
 ##Inlfuential data
 ```{r}
-infl <- influence.measures(mod3.2)
+infl <- influence.measures(mod3)
 infl$infmat
 
-cooks.distance(mod3.2)
-sum(residuals(mod3.2,'deviance')^2)
-sum(residuals(mod3.2,'pearson')^2)
-
+cooks.distance(mod3)
+sum(residuals(mod3,'deviance')^2)
+sum(residuals(mod3,'pearson')^2)
 ```
 
 
-
-
 ```{r}
-res_3.2 <- mod3.2$residuals
+res_3 <- mod3$residuals
 
 # Plotting a histogram of residuals
-hist(res_3.2, main = "Histogram of Residuals", xlab = "Residuals")
+hist(res_3, main = "Histogram of Residuals", xlab = "Residuals")
 
 # Q-Q plot for normality
-qqnorm(res_3.2)
-qqline(res_3.2)
+qqnorm(res_3)
+qqline(res_3)
 
 # Calculate Cook's distance
-cd_m3.2 <- cooks.distance(mod3.2)
+cd_m3 <- cooks.distance(mod3)
 
 # Plot Cook's distance
-plot(cd_m3.2, pch = "18", main = "Cook's Distance Plot")
-abline(h = 4/(length(mod3.2$coefficients) - 1), col = "red")
+plot(cd_m3, pch = "18", main = "Cook's Distance Plot")
+abline(h = 4/(length(mod3$coefficients) - 1), col = "red")
 
 #Check homoscedasticity (constant variance of residuals) by plotting residuals against fitted values:
 
 # Plotting residuals against fitted values
 
-plot(fitted(mod3.2), res_3.2, pch = 16, main = "Residuals vs. Fitted Values", xlab = "Fitted Values", ylab = "Residuals")
+plot(fitted(mod3), res_3, pch = 16, main = "Residuals vs. Fitted Values", xlab = "Fitted Values", ylab = "Residuals")
 ```
 
 
@@ -607,9 +560,9 @@ We start with *Contract* variable.
 ```{r}
 mod4 <- glm(Churn ~ tenure + MonthlyCharges + Contract, data=train, family=binomial)
 summary(mod4) #4302.2 better
-anova( mod3.2, mod4,  test="Chisq") #significant
+anova( mod3, mod4,  test="Chisq") #significant
 vif(mod4)
-residualPlots(mod4)
+residualPlot(mod4)
 ```
 We add the parameter because it improves the model.
 
@@ -621,7 +574,7 @@ mod5 <- glm(Churn ~ tenure + MonthlyCharges + Contract + InternetService, data=t
 summary(mod5) #4254.1 better
 anova( mod4, mod5,  test="Chisq") #significant
 vif(mod5)
-residualPlots(mod5)
+residualPlot(mod5)
 ```
 
 
@@ -632,7 +585,7 @@ mod6 <- glm(Churn ~ tenure + MonthlyCharges + Contract + InternetService + Strea
 summary(mod6) #4238.6 better
 anova( mod5, mod6,  test="Chisq") #significant
 vif(mod6)
-residualPlots(mod6)
+residualPlot(mod6)
 ```
 The model has improved but the VIF is becoming higher.
 
@@ -643,7 +596,7 @@ mod7 <- glm(Churn ~ tenure + MonthlyCharges + Contract + InternetService + Strea
 summary(mod7) #4213.5 better
 anova( mod6, mod7,  test="Chisq") #significant
 vif(mod7)
-residualPlots(mod7)[01]
+residualPlot(mod7)
 ```
 
 *MonthlyCharges* has a high VIF. We'll may need to add transformations or maybe discard this parameter. For now, we'll keep the parameters that we have been adding.
@@ -652,16 +605,22 @@ residualPlots(mod7)[01]
 
 ```{r}
 mod8 <- glm(Churn ~ tenure + MonthlyCharges + Contract + InternetService + StreamingMovies + StreamingTV + TechSupport, data=train, family=binomial)
-summary(mod8) #4208.3 better
+#summary(mod8) #4208.3 better
+AIC(mod8)
 anova( mod7, mod8,  test="Chisq") #significant
 vif(mod8)
+residualPlot(mod8)
 ```
+
+Including *TechSupport* improves the model.
+
 
 #DeviceProtection
 
 ```{r}
 mod9 <- glm(Churn ~ tenure + MonthlyCharges + Contract + InternetService + StreamingMovies + StreamingTV + TechSupport + DeviceProtection, data=train, family=binomial)
 summary(mod9) #4209.3 worse
+AIC(mod9)
 anova( mod8, mod9,  test="Chisq") #not significant
 
 ```
@@ -683,9 +642,10 @@ We don't add the parameter to the model. It does not improve it.
 ```{r}
 mod11 <- glm(Churn ~ tenure + MonthlyCharges + Contract + InternetService + StreamingMovies + StreamingTV + TechSupport + OnlineSecurity, data=train, family=binomial)
 summary(mod11) #4199 better
+AIC(mod11)
 anova( mod8, mod11,  test="Chisq") #significant
 vif(mod11)
-#residualPlot(mod11)
+residualPlot(mod11)
 ```
 
 We keep the parameter
@@ -695,6 +655,7 @@ We keep the parameter
 ```{r}
 mod12 <- glm(Churn ~ tenure + MonthlyCharges + Contract + InternetService + StreamingMovies + StreamingTV + TechSupport + OnlineSecurity + PaperlessBilling, data=train, family=binomial)
 summary(mod12) #4184.5 better
+AIC(mod12)
 anova( mod11, mod12,  test="Chisq") #significant
 vif(mod12)
 ```
@@ -706,6 +667,7 @@ We keep the parameter
 ```{r}
 mod13 <- glm(Churn ~ tenure + MonthlyCharges + Contract + InternetService + StreamingMovies + StreamingTV + TechSupport + OnlineSecurity + PaperlessBilling + Dependents, data=train, family=binomial)
 summary(mod13) #4177.2 better
+AIC(mod13)
 anova( mod12, mod13,  test="Chisq") #significant
 vif(mod13)
 ```
@@ -751,9 +713,11 @@ We don't keep the parameter
 ```{r}
 mod17 <- glm(Churn ~ tenure + MonthlyCharges + Contract + InternetService + StreamingMovies + StreamingTV + TechSupport + OnlineSecurity + PaperlessBilling + Dependents + MultipleLines + SeniorCitizen + PaymentMethod, data=train, family=binomial)
 summary(mod17) #4139.4 better
+AIC(mod17)
 anova( mod15, mod17,  test="Chisq") #significant
 vif(mod17)
 ```
+
 
 
 #PhoneService
@@ -766,10 +730,6 @@ anova( mod17, mod18,  test="Chisq") #not significant
 
 ##Interactions
 
-```{r}
-str(train)
-```
-
 We need to search for interactions. Possible interactions:
 
 - Dependents and Multiple Lines
@@ -777,9 +737,11 @@ We need to search for interactions. Possible interactions:
 ```{r}
 mod19 <- glm(Churn ~ tenure + MonthlyCharges + Contract + InternetService + StreamingMovies + StreamingTV + TechSupport + OnlineSecurity + PaperlessBilling + Dependents * MultipleLines + SeniorCitizen + PaymentMethod, data=train, family=binomial)
 summary(mod19) #4140.4 worse
+AIC(mod19)
 anova( mod17, mod19,  test="Chisq") #not significant
-vif(mod19)
 ```
+We don't include the interaction since it is not significative
+
 
 - MonthlyCharges and InternetService
 
@@ -815,11 +777,11 @@ vif(mod22)
 ```{r}
 
 
-deviance(ngm4);ngm4$df.residual
-deviance(ngm6);ngm6$df.residual
-deviance(ngm4)-deviance(ngm6)
-((deviance(ngm4)-deviance(ngm6))/6)/1.1678
-1-pf(1.533252,6,53)
+#deviance(ngm4);ngm4$df.residual
+#deviance(ngm6);ngm6$df.residual
+#deviance(ngm4)-deviance(ngm6)
+#((deviance(ngm4)-deviance(ngm6))/6)/1.1678
+#1-pf(1.533252,6,53)
 ```
 
 
@@ -842,11 +804,40 @@ anova( mod23, mod23.1,  test="Chisq") #significant
 vif(mod23.1) #better vif
 ```
 
-Removing *MonthlyCharges* from the model is getting a bit worse the AIC but the change is significant and it improves the VIF.
+Removing *MonthlyCharges* from the model is getting a bit worse the AIC but the change is significant and it improves the VIF. We keep this last model.
 
 
+###Predictions
+
+```{r}
+#selecting the parameters that we have in the model
+names(test)
+
+test_data <- test[c(3,5,6,8,9,10,13,14,15,16,17,18)]
+
+churn_pred<- ifelse(predict(mod23.1,newdat = test_data, type="response")>0.5,"Yes","No")
+
+table(churn_pred)
+table(test$Churn)
+
+#Confusion table
+
+tt <- table(churn_pred, test$Churn);tt
+100*sum(diag(tt))/sum(tt) #80.22
+
+```
+
+The accuracy of our model is good, it is $80.22%$.
+
+Our final model is
 
 
+```{r}
+summary(mod23.1)
+coef(mod23.1)
+```
+
+$$Y = -0.23 - 0.08 tenure + 0.0007 tenure^2 + 0.75 InternetServiceFiber optic - 0.92 InternetServiceNo - 0.72 ContractOne year - 1.88 ContractTwo year + 0.24 StreamingMoviesYes + 0.33 StreamingTVYes - 0.24 TechSupportYes - 0.29 Online SecurityYes + 0.32 PaperlessBillingYes - 0.21 DependentsYes + 0.31 MultipleLinesYes - 0.13 SeniorCitizen1 - 0.26 PaymentMethodCredit card + 0.28 PaymentMethodElectronic check - 0.20 PaymentMethodMailed check + 0.82 SeniorCitizen1:PaymentMethodCredit card + 0.29 SeniorCitizen1: PaymentMethodElectronic check + 1.05 SeniorCitizen1:PaymentMethodMailed check$$
 
 
 #########################################################################################################################
