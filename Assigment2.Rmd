@@ -22,8 +22,8 @@ library(pROC)
 
 
 ```{r, include=FALSE}
-#setwd("/Users/ali/Documents/GitHub/projSIM")
-setwd("C:/Users/Brunil/Desktop/Bruna/Master/SIM/assignment_2")
+setwd("/Users/ali/Documents/GitHub/projSIM")
+#setwd("C:/Users/Brunil/Desktop/Bruna/Master/SIM/assignment_2")
 df<-read.csv("customer.xls", sep=",")
 ```
 
@@ -37,10 +37,6 @@ dim(df)
 names(df)
 #str(df)
 #summary(df)
-```
-We only have NA values in *TotalCharges*.
-```{r}
-summary(is.na(df)) 
 ```
 
 ## Variable Description
@@ -381,7 +377,8 @@ sqrt(chisq.test(contingency_table)$statistic / (sum(contingency_table) * (min(di
 ```{r}
 res.cat=catdes(df, 21)
 res.cat$test.chi2
-head(res.cat$category)
+lapply(res.cat$category, head, n = 5)
+lapply(res.cat$category, tail, n = 5)
 res.cat$quanti.var
 res.cat$quanti
 ```
@@ -435,7 +432,6 @@ We saw that *MultipleLines* is 100% related with *PhoneService*. The reason is s
 
 ```{r}
 df$MultipleLines[df$MultipleLines=="No phone service"] <- "No"
-summary(df)
 ```
 
 
@@ -451,7 +447,7 @@ train <- df[train_d,]
 test <- df[-train_d,]
 ```
 
-Target variable is Churn. 
+Recall that the target variable is *Churn*. 
 
 ### Numerical Variables
 
@@ -493,7 +489,6 @@ mod3$deviance
 anova( mod2, mod3,  test="Chisq") #significant
 AIC(mod3) #4468.55
 vif(mod3)
-residualPlot(mod3)
 ```
 It is significant enough but we can also see that *TotalCHarges* has a high VIF, so it has high multicollinearity. We decide to not include it in the model.
 
@@ -508,8 +503,6 @@ sum(residuals(mod3,'pearson')^2)
 influential_indices <- which(infl$is.inf == TRUE)
 length(influential_indices)
 length(train$customerID)
-
-
 ```
 We have 209 influential points out of 4930.
 
@@ -549,7 +542,6 @@ mod4 <- glm(Churn ~ tenure + MonthlyCharges + Contract, data=train, family=binom
 AIC(mod4) #4302.2 better
 anova( mod3, mod4,  test="Chisq") #significant
 vif(mod4)
-residualPlot(mod4)
 ```
 We add the parameter because it improves the model.
 
@@ -561,7 +553,6 @@ mod5 <- glm(Churn ~ tenure + MonthlyCharges + Contract + InternetService, data=t
 AIC(mod5) #4254.1 better
 anova( mod4, mod5,  test="Chisq") #significant
 vif(mod5)
-residualPlot(mod5)
 ```
 
 
@@ -572,7 +563,6 @@ mod6 <- glm(Churn ~ tenure + MonthlyCharges + Contract + InternetService + Strea
 AIC(mod6) #4238.6 better
 anova( mod5, mod6,  test="Chisq") #significant
 vif(mod6)
-residualPlot(mod6)
 ```
 The model has improved but the VIF is becoming higher.
 
@@ -583,10 +573,9 @@ mod7 <- glm(Churn ~ tenure + MonthlyCharges + Contract + InternetService + Strea
 AIC(mod7) #4213.5 better
 anova( mod6, mod7,  test="Chisq") #significant
 vif(mod7)
-residualPlot(mod7)
 ```
 
-*MonthlyCharges* has a high VIF. We'll may need to add transformations or maybe discard this parameter. For now, we'll keep the parameters that we have been adding.
+*MonthlyCharges* has a high VIF. We'll may need to add transformations or maybe discard this variable For now, we will keep the parameters that we have been adding.
 
 ## TechSupport
 
@@ -596,7 +585,6 @@ mod8 <- glm(Churn ~ tenure + MonthlyCharges + Contract + InternetService + Strea
 AIC(mod8)
 anova( mod7, mod8,  test="Chisq") #significant
 vif(mod8)
-residualPlot(mod8)
 ```
 
 Including *TechSupport* improves the model.
@@ -612,7 +600,7 @@ anova( mod8, mod9,  test="Chisq") #not significant
 
 ```
 
-We don't add the parameter to the model. It does not improve it.
+We don't add the variable to the model. It does not improve it.
 
 
 ## OnlineBackup
@@ -622,7 +610,7 @@ mod10 <- glm(Churn ~ tenure + MonthlyCharges + Contract + InternetService + Stre
 AIC(mod10) #4209.6 worse
 anova( mod8, mod10,  test="Chisq") #not significant
 ```
-We don't add the parameter to the model. It does not improve it.
+We don't add the variable to the model. It does not improve it.
 
 ## OnlineSecurity
 
@@ -630,11 +618,9 @@ We don't add the parameter to the model. It does not improve it.
 mod11 <- glm(Churn ~ tenure + MonthlyCharges + Contract + InternetService + StreamingMovies + StreamingTV + TechSupport + OnlineSecurity, data=train, family=binomial)
 AIC(mod11) #4199 better
 anova( mod8, mod11,  test="Chisq") #significant
-vif(mod11)
-residualPlot(mod11)
 ```
 
-We keep the parameter
+We keep the variable
 
 ## PaperlessBilling
 
@@ -646,7 +632,7 @@ anova( mod11, mod12,  test="Chisq") #significant
 vif(mod12)
 ```
 
-We keep the parameter
+We keep the variable
 
 ## Dependents
 
@@ -658,7 +644,7 @@ anova( mod12, mod13,  test="Chisq") #significant
 vif(mod13)
 ```
 
-We keep the parameter
+We keep the variable
 
 ## MultipleLines
 
@@ -671,7 +657,7 @@ vif(mod14)
 
 ```
 
-We keep the parameter
+We keep the variable
 
 ## SeniorCitizen
 
@@ -682,7 +668,7 @@ anova( mod14, mod15,  test="Chisq") #significant
 vif(mod15)
 ```
 
-We keep the parameter
+We keep the variable
 
 ## Partner
 
@@ -692,7 +678,7 @@ AIC(mod16) #4157.7 worse
 anova( mod15, mod16,  test="Chisq") #not significant
 ```
 
-We don't keep the parameter
+We don't keep the variable
 
 ## PaymentMethod
 
@@ -773,8 +759,6 @@ anova( mod20, mod22,  test="Chisq") #significant
 
 vif(mod22)
 ```
-
-
 Having both interactions improves the model but VIF gets worse. The best model is with SeniorCitizen and PaymentMethod interaction (mod21)
 
 
@@ -838,6 +822,21 @@ We see that we have improved the residuals.
 
 ### Predictions
 
+
+```{r}
+rmse <- function(fitted, actual){
+  sqrt(mean((fitted - actual)^2))
+}
+
+RSQUARE <- function(predictions, actual_values) {
+  ss_residual <- sum((actual_values - predictions)^2)
+  ss_total <- sum((actual_values - mean(actual_values))^2)
+  rsquare <- 1 - (ss_residual / ss_total)
+  return(rsquare)
+}
+```
+
+
 ```{r}
 #selecting the parameters that we have in the model
 
@@ -874,11 +873,10 @@ text(0.8, 0.2, paste("AUC =", round(auc(roc_curve), 2)), col = "blue", cex = 1.2
 
 ```
 
-Our Area Under the Curve for ROC curve is 0.85 so it is high
+Our Area Under the Curve for ROC curve is 0.85 so it is high.
 
 
 Our final model is
-
 
 ```{r}
 coef(mod23.4)
@@ -953,6 +951,6 @@ summary(mod18)
 mod19 <- glm(Churn ~ TotalCharges, data=train, family=binomial)
 summary(mod19)
 
-AIC(mod)
+AIC(mod, mod1,mod2,mod3,mod4,mod5,mod6,mod7,mod8,mod9,mod10,mod11,mod12, mod13,mod14)
 ```
 
