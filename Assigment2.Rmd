@@ -3,9 +3,15 @@ title: "Assignment 2"
 author: "Alícia Chimeno Sarabia and Bruna Barraquer Torres"
 date: "2023-12-02"
 output:
-  pdf_document: default
-  word_document: default
+  pdf_document:
+    latex_engine: xelatex
+    keep_tex: true
+    number_sections: true
+    toc: true
   html_document: default
+  word_document: default
+classoption: twoside
+geometry: margin=1in
 editor_options:
   chunk_output_type: console
 ---
@@ -22,60 +28,68 @@ library(pROC)
 
 
 ```{r, include=FALSE}
-setwd("/Users/ali/Documents/GitHub/projSIM")
-#setwd("C:/Users/Brunil/Desktop/Bruna/Master/SIM/assignment_2")
+#setwd("/Users/ali/Documents/GitHub/projSIM")
+setwd("C:/Users/Brunil/Desktop/Bruna/Master/SIM/assignment_2")
 df<-read.csv("customer.xls", sep=",")
 ```
 
+\newpage
+
 # Data context
+
 This dataset contains information about customers. Demographic data, 
 
 # Data exploration
 
-```{r}
+```{r, echo=FALSE }
 dim(df)
 names(df)
-#str(df)
-#summary(df)
 ```
 
 ## Variable Description
-In total, we have 21 variables related to demographic, services, and accountant data. One is the ID, three are numerical variables, and 17 are categorical (? binary) variables. We will conduct a descriptive analysis and a data quality report for each variable, considering aspects such as the number of missing values, errors, and the distribution or balance of the variable...
+In total, we have 21 variables related to demographic, services, and accountant data. One is the ID, three are numerical variables, and 17 are categorical variables. We will conduct a descriptive analysis and a data quality report for each variable, considering aspects such as the number of missing values, errors, and the distribution or balance of the variable...
 
-#### 1. customerID 
+**customerID**
+
+We won't need this variable for the analysis nor the modelling.
 
 ### **Demographic data**
-#### 2. gender
-Is a binary variable (female/male). 
-```{r,}
+
+**gender**
+
+Is a binary variable (female/male). It doesn't contain NA values.
+```{r,echo=FALSE}
 sum(is.na(df$gender))
 table(df$gender)
 ```
 
-#### 3. SeniorCitizen
-It is a binary variable. Levels: 1(=yes)/0(=no). 
-```{r}
+**SeniorCitizen**
+
+It is a binary variable. Levels: 1(=yes)/0(=no).  It doesn't contain NA values.
+```{r, echo=FALSE}
 sum(is.na(df$SeniorCitizen))
 table(df$SeniorCitizen)
 ```
 
-#### 4. Partner
-It is a binary variable. Levels: Yes/No. 
-```{r}
+**Partner**
+
+It is a binary variable. Levels: Yes/No. It doesn't contain NA values.
+
+```{r, echo=FALSE}
 sum(is.na(df$Partner))
 table(df$Partner)
 ```
 
+**Dependents**
 
-#### 5. Dependents
-It is a binary variable. Levels: Yes/No. 
-```{r}
+It is a binary variable. Levels: Yes/No. It doesn't contain NA values.
+
+```{r, echo = FALSE}
 sum(is.na(df$Dependents))
 table(df$Dependents)
 ```
 
-
-```{r}
+```{r, echo=FALSE}
 #plots
 par(mfrow = c(2, 2))
 barplot(table(df$gender), main = "Distribution of gender",xlab = "Gender",col = "skyblue") 
@@ -88,63 +102,78 @@ barplot(table(df$Dependents), main = "Distribution of Dependents",xlab = "Depend
 ### **Services of the costumer data** 
 Services that each customer has signed up for:
 
-#### 6. tenure
+
+**tenure**
+
 It is a numerical variable that indicates the duration, in months, that the customer has stayed with the company. We shall explore the statistics of the variable and look for the *outliers*
-```{r}
+```{r, echo=FALSE, fig.width=6, fig.height=3}
 summary(df$tenure)
 par(mfrow = c(1, 2))
-hist(df$tenure,breaks=20, col="skyblue")
-Boxplot(df$tenure, main="Outlier analysis for Tenure")
+hist(df$tenure,breaks=20, col="skyblue", main="Histogram")
+Boxplot(df$tenure, main="Outlier analysis")
+```
+
+```{r}
 par(mfrow = c(1, 1))
 sm_t <- summary(df$tenure)
 iqr_t <- sm_t["3rd Qu."] - sm_t["1st Qu."]
 # Mild Outliers
 mild_ub_t <- sm_t["3rd Qu."] + 1.5 * iqr_t
 mild_lb_t <- sm_t["1st Qu."] - 1.5 * iqr_t
-length(which(df$tenure > mild_ub_t | df$tenure < mild_lb_t)) # number of mild outliers
+length(which(df$tenure > mild_ub_t | df$tenure < mild_lb_t))
+# number of mild outliers
 
 # Severe Outliers
 severe_ub_t <- sm_t["3rd Qu."] + 3 * iqr_t
 severe_lb_t <- sm_t["1st Qu."] - 3 * iqr_t
-length(which(df$tenure > severe_ub_t | df$tenure < severe_lb_t)) # number of severe outliers
+length(which(df$tenure > severe_ub_t | df$tenure < severe_lb_t))
+# number of severe outliers
 ```
 
-There are *no mild nor severe outliers* in Tenure. 
+There are **no mild nor severe outliers** in Tenure. 
 
-#### 7. PhoneService 
-It is a binary variable. Levels: Yes/No. 
-```{r}
+**PhoneService**
+
+It is a binary variable. Levels: Yes/No.  It doesn't contain NA values.
+```{r, echo=FALSE}
 sum(is.na(df$PhoneService))
 table(df$PhoneService)
 ```
 
-#### 8. MultipleLines
-Categorical variable with 3 levels, No/No phone service/Yes. 
-```{r}
+**MultipleLines**
+
+Categorical variable with 3 levels, No/No phone service/Yes.  It doesn't contain NA values.
+```{r, echo=FALSE}
 sum(is.na(df$MultipleLines))
 table(df$MultipleLines)
 ```
 
-Check inconsistencies: 
-- Cannot happen that a costumer has not phoneservice and multiplelines.
-```{r}
+Check for inconsistencies:
+
+- It cannot happen that a costumer has not Phoneservice and Multiplelines.
+
+```{r, echo=FALSE}
 subset(df, MultipleLines == "Yes" & PhoneService == "No") 
 ```
 
 
-#### 9. InternetService
-Categorical variable with 3 levels: DSL/Fiber optic/No. 
-```{r}
+**InternetService**
+
+Categorical variable with 3 levels: DSL/Fiber optic/No.  It doesn't contain NA values.
+```{r,  echo=FALSE}
 table(df$InternetService)
+sum(is.na(df$InternetService))
 ```
 
-#### 10. OnlineSecurity
-Categorical variable with 3 levels: No/No internet service/Yes 
-```{r}
+**OnlineSecurity**
+
+Categorical variable with 3 levels: No/No internet service/Yes.  It doesn't contain NA values.
+```{r,  echo=FALSE}
 table(df$OnlineSecurity)
+sum(is.na(df$OnlineSecurity))
 ```
 
-```{r}
+```{r,  echo=FALSE}
 #plots: 
 par(mfrow = c(2, 2))
 barplot(table(df$PhoneService), main = "Distribution of PhoneService",xlab = "PhoneService",col = "skyblue") #unbalanced
@@ -161,10 +190,12 @@ nrow(subset(df, InternetService == "No" & OnlineSecurity == "No internet service
 ```
 
 
-#### 11. OnlineBackup
-Categorical variable with 3 levels: No/No internet service/Yes 
-```{r}
+**OnlineBackup**
+
+Categorical variable with 3 levels: No/No internet service/Yes. It doesn't contain NA values.
+```{r, echo=FALSE}
 table(df$OnlineBackup)
+sum(is.na(df$OnlineBackup))
 ```
 
 ```{r}
@@ -173,23 +204,25 @@ sum(df$OnlineBackup == "No internet service") #1526
 sum(df$OnlineSecurity == "No internet service") #1526
 ```
 
-#### 12. DeviceProtection
-Categorical variable with 3 levels: No/No internet service/Yes 
-```{r}
+**DeviceProtection**
+Categorical variable with 3 levels: No/No internet service/Yes. It doesn't contain NA values.
+```{r, echo=FALSE}
 table(df$DeviceProtection)
+sum(is.na(df$DeviceProtection))
 ```
 
-
 ```{r}
-# Check concistency
+# Check consistency
 sum(df$OnlineSecurity == "No internet service") #1526
 sum(df$DeviceProtection == "No internet service") #1526
 ```
 
-#### 13. TechSupport
-Categorical variable with 3 levels: No/No internet service/Yes 
-```{r}
+**TechSupport**
+
+Categorical variable with 3 levels: No/No internet service/Yes. It doesn't contain NA values.
+```{r, echo=FALSE}
 table(df$TechSupport)
+sum(is.na(df$TechSupport))
 ```
 
 ```{r}
@@ -198,10 +231,11 @@ sum(df$DeviceProtection == "No internet service") #1526
 sum(df$TechSupport == "No internet service") #1526
 ```
 
-#### 14. StreamingTV
-Categorical variable with 3 levels: No/No internet service/Yes 
-```{r}
+**StreamingTV**
+Categorical variable with 3 levels: No/No internet service/Yes. It doesn't contain NA values.
+```{r, echo=FALSE}
 table(df$StreamingTV)
+sum(is.na(df$StreamingTV))
 ```
 
 ```{r}
@@ -210,10 +244,12 @@ sum(df$TechSupport == "No internet service") #1526
 sum(df$StreamingTV == "No internet service") #1526
 ```
 
-#### 15. StreamingMovies
-Categorical variable with 3 levels: No/No internet service/Yes 
-```{r}
+**StreamingMovies**
+
+Categorical variable with 3 levels: No/No internet service/Yes. It doesn't contain NA values.
+```{r, echo=FALSE}
 table(df$StreamingMovies)
+sum(is.na(df$StreamingTV))
 ```
 
 ```{r}
@@ -222,7 +258,7 @@ sum(df$StreamingTV == "No internet service") #1526
 sum(df$StreamingMovies == "No internet service") #1526
 ```
 
-```{r}
+```{r, echo=FALSE}
 #plots: 
 par(mfrow = c(2, 2))
 barplot(table(df$OnlineBackup), main = "Distribution of OnlineBackup",xlab = "OnlineBackup",col = "skyblue") 
@@ -232,27 +268,30 @@ barplot(table(df$StreamingTV), main = "Distribution of StreamingTV",xlab = "Stre
 barplot(table(df$StreamingMovies), main = "Distribution of StreamingMovies",xlab = "StreamingMovies",col = "skyblue")
 ```
 
-
 ### Customer account data
-#### 16. Contract
-Categorical variable with 3 levels: Month-to-month/One year/Two year 
-```{r}
+
+**Contract**
+Categorical variable with 3 levels: Month-to-month/One year/Two year. It doesn't contain NA values.
+```{r, echo=FALSE}
 table(df$Contract)
+sum(is.na(df$Contract))
 ```
 
-#### 17. PaperlessBilling
-It is a binary variable. Levels: No/Yes
+**PaperlessBilling**
+It is a binary variable. Levels: No/Yes. It doesn't contain NA values.
 ```{r}
 table(df$PaperlessBilling)
+sum(is.na(df$PaperlessBilling))
 ```
 
-#### 18. PaymentMethod
-Categorical variable with 4 levels: Bank transfer (automatic)/Credit card (automatic)/Electronic check/Mailed check
+**PaymentMethod**
+Categorical variable with 4 levels: Bank transfer (automatic)/Credit card (automatic)/Electronic check/Mailed check. It doesn't contain NA values.
 ```{r}
 table(df$PaymentMethod)
+sum(is.na(df$PaymentMethod))
 ```
 
-```{r}
+```{r, echo=FALSE}
 #plots
 par(mfrow = c(2, 2))
 barplot(table(df$Contract), main = "Distribution of Contract",xlab = "Contract",col = "skyblue")
@@ -261,13 +300,15 @@ barplot(table(df$PaymentMethod), main = "Distribution of PaymentMethod",xlab = "
 ```
 
 
-#### 19. MonthlyCharges 
-It is a numerical variable.
-```{r}
+**MonthlyCharges**
+
+It is a numerical variable. It doesn't contain NA values.
+```{r, echo=FALSE, fig.width=6, fig.height=3}
 summary(df$MonthlyCharges)
 par(mfrow = c(1,2 ))
-hist(df$MonthlyCharges,breaks=20,col="skyblue")
-Boxplot(df$MonthlyCharges, main="Outlier analysis for MonthlyCharges")
+hist(df$MonthlyCharges,breaks=20,col="skyblue", main="Histogram")
+Boxplot(df$MonthlyCharges, main="Outlier analysis")
+sum(is.na(df$MonthlyCharges))
 ```
 
 Let's look for *outliers*. 
@@ -277,26 +318,25 @@ iqr <- sm["3rd Qu."] - sm["1st Qu."]
 # Mild Outliers
 mild_ub <- sm["3rd Qu."] + 1.5 * iqr
 mild_lb <- sm["1st Qu."] - 1.5 * iqr
-length(which(df$MonthlyCharges > mild_ub | df$MonthlyCharges < mild_lb)) # number of mild outliers
+length(which(df$MonthlyCharges > mild_ub | df$MonthlyCharges < mild_lb)) 
 
 # Severe Outliers
 severe_ub <- sm["3rd Qu."] + 3 * iqr
 severe_lb <- sm["1st Qu."] - 3 * iqr
-length(which(df$MonthlyCharges > severe_ub | df$MonthlyCharges < severe_lb)) # number of severe outliers
-
+length(which(df$MonthlyCharges > severe_ub | df$MonthlyCharges < severe_lb)) 
 ```
 There are no mild nor severe outliers in MonthlyCharges.
 
-#### 20. TotalCharges (numeric)
+**TotalCharges**
 
-It is a numerical variable.
-```{r}
+It is a numerical variable. It does contain 11 NA values.
+```{r, echo=FALSE, fig.width=6, fig.height=3}
 summary(df$TotalCharges)
 sum(is.na(df$TotalCharges))
 par(mfrow = c(1, 2))
-hist(df$TotalCharges,breaks=20,col="skyblue")
-Boxplot(df$TotalCharges, main="Outlier analysis for TotalCharges")
-
+hist(df$TotalCharges,breaks=20,col="skyblue", main="Histogram")
+Boxplot(df$TotalCharges, main="Outlier analysis")
+sum(is.na(df$TotalCharges)) #NA values
 ```
 
 Let's look for *outliers*.
@@ -306,24 +346,24 @@ iqr <- sm["3rd Qu."] - sm["1st Qu."]
 # Mild Outliers
 mild_ub <- sm["3rd Qu."] + 1.5 * iqr
 mild_lb <- sm["1st Qu."] - 1.5 * iqr
-length(which(df$TotalCharges > mild_ub | df$TotalCharges < mild_lb)) # number of mild outliers
+length(which(df$TotalCharges > mild_ub | df$TotalCharges < mild_lb))
 
 # Severe Outliers
 severe_ub <- sm["3rd Qu."] + 3 * iqr
 severe_lb <- sm["1st Qu."] - 3 * iqr
-length(which(df$TotalCharges > severe_ub | df$TotalCharges < severe_lb)) # number of severe outliers
-
+length(which(df$TotalCharges > severe_ub | df$TotalCharges < severe_lb))
 ```
 There are no mild nor severe outliers.
 
-### Target: 
-#### 21. Churn
+### Target variable: 
+**Churn**
 It is the target variable. It is binary, describes whether the customer churned or not (Yes or No). 
 
-```{r}
+```{r,fig.width=3, fig.height=3}
 table(df$Churn)
 prop.table(table(df$Churn))
 barplot(table(df$Churn), col="skyblue")
+sum(is.na(df$Churn))
 ```
 
 
@@ -341,7 +381,7 @@ df$SeniorCitizen<- factor(df$SeniorCitizen)
 ```
 
 ### Data imputation
-```{r}
+```{r, echo=FALSE}
 summary(is.na(df))
 ```
 Only the variable TotalCharges has NA's. 
@@ -350,7 +390,6 @@ The missing data corresponds to the individuals that have not payed yet the char
 
 Duplicate values: no
 ```{r}
-dim(df)
 length(unique(df$customerID))
 ```
 
@@ -359,7 +398,6 @@ These NA exist because the costumer hasn't payed yet that month (tenure is 0). W
 ```{r}
 ll <- which(is.na(df$TotalCharges))
 df[ll,"TotalCharges"] <- 0
-summary(is.na(df$TotalCharges))
 ```
 
 
@@ -380,23 +418,13 @@ res.cat$test.chi2
 lapply(res.cat$category, head, n = 5)
 lapply(res.cat$category, tail, n = 5)
 res.cat$quanti.var
-res.cat$quanti
 ```
-
-
-
 
 Regarding to the results of the test $Chi^2$ all correlations with the variables
 are significant since the $p-value$ is less than 0,05.
 Since the response variable is binary, we have different results for each answer and also for all outcomes of the categorical parameters.
 
-For example, we can analyse in detail the variable "Contract". For the customers that haven't churned, the correlation between the ones that have a contract of two year is directly proportional and it's the highest relation. However, we can see that is the costumer has churned the ones that have a two-year contract have an strong negative correlation. The ones that have a month-to-month contract are the opposite of the previous answer; they have the highest positive correlation with the costumers that have churned and the negative with the ones that haven't.
-
-Besides the latter variable, we can observe the parameter that have a higher positive correlation with the costumers that churn is the parameter "OnlineSecurity" and "TechSupport" when the answer is "No". The parameters that have a negative relation with the costumers that churn are when they haven't hired an Internet Service. We can see that all parameters that have an answer that is "No internet service" have also a negative relation with the response variable "Yes". We can deduce that they might have multicollinearity with the parameter Internet Service, but we will check it later.
-
-The parameters that have a higher positive relation with the costumers that don't churn are the ones that have a negative relation when the response variable is "Yes", that we have analysed before. In the same vein, we can observe that the parameters that have a negative relation with the costumers that churn are "OnlineSecurity" and "TechSupport" when the answer is "No", the same parameters that have a positive relation when the costumers churn. We can see that the target answer "Yes" and "No" have an approximate opposite correlations with the explanatory variables.
-
-
+The parameters that have a higher positive relation with the costumers that don't churn are the ones that have a negative relation when the response variable is "Yes". In the same vein, we can observe that the parameters that have a negative relation with the costumers that churn are "OnlineSecurity" and "TechSupport" when the answer is "No", the same parameters that have a positive relation when the costumers churn. We can see that the target answer "Yes" and "No" have an approximate opposite correlations with the explanatory variables.
 
 ## Modelling
 
@@ -428,15 +456,11 @@ df$StreamingMovies[df$StreamingMovies=="No internet service"] <- "No"
 
 We saw that *MultipleLines* is 100% related with *PhoneService*. The reason is similar as the previous parameters: one answer of *MultipleLines* is "No phone service". We set this answer to "No" since we don't lose the information because it is contained inside the parameter *PhoneService*.
 
-
-
 ```{r}
 df$MultipleLines[df$MultipleLines=="No phone service"] <- "No"
 ```
 
-
 ### Modelling:
-
 
 ```{r}
 set.seed(1234)
@@ -451,6 +475,8 @@ Recall that the target variable is *Churn*.
 
 ### Numerical Variables
 
+**Null Model**
+
 We start the modelling by the null model.
 ```{r}
 mod0 <- glm(Churn ~ 1, data=train, family=binomial)
@@ -462,7 +488,8 @@ We continue by adding the numerical variables and assessing the model.
 which(sapply(df, is.numeric))
 ```
 
-We start by *tenure*
+**Tenure**
+
 ```{r}
 mod1 <- glm(Churn ~ tenure, data=train, family=binomial)
 mod1$deviance;AIC(mod0,mod1) #summary(mod1)
@@ -470,18 +497,16 @@ anova( mod0, mod1,  test="Chisq")
 
 ```
 
+**MonthlyCharges**
 
-Add MonthlyCharges 
 ```{r}
 mod2 <- glm(Churn ~ tenure + MonthlyCharges, data=train, family=binomial)
 mod2$deviance
 AIC(mod2) #4473.45
 anova( mod1, mod2,  test="Chisq")
-residualPlot(mod2)
 ```
 
-
-Add TotalCharges
+**TotalCharges**
 
 ```{r}
 mod3 <- glm(Churn ~ tenure + MonthlyCharges + TotalCharges, data=train, family=binomial)
@@ -490,10 +515,10 @@ anova( mod2, mod3,  test="Chisq") #significant
 AIC(mod3) #4468.55
 vif(mod3)
 ```
-It is significant enough but we can also see that *TotalCHarges* has a high VIF, so it has high multicollinearity. We decide to not include it in the model.
+It is significant enough but we can also see that *TotalCharges* has a high VIF, so it has high multicollinearity. We decide to not include it in the model.
 
 
-## Inlfuential data
+### Inlfuential data
 ```{r}
 infl <- influence.measures(mod3)
 
@@ -507,36 +532,20 @@ length(train$customerID)
 We have 209 influential points out of 4930.
 
 
-## Residuals
-```{r}
-residualPlot(mod3)
+### Residuals
+```{r, fig.width=4, fig.height=4}
+par(mfrow = c(2, 2))
+residualPlots(mod3)
 ```
 
-The residuals need to be nearer to the 0.
+The residuals need to be nearer to the 0 and they have homocedasticity.
 
 ### Categorical Variables
 
 Now, we shall add the categorical variables. The order of addition is significant, therefore we start by adding the most correlated variables with the target. 
 
-Contract
-InternetService
-StreamingMovies
-StreamingTV
-TechSupport
-DeviceProtection
-OnlineBackup
-OnlineSecurity
-PaperlessBilling
-Dependents
-MultipleLines
-SeniorCitizen
-Partner
-PaymentMethod
-PhoneService
+**Contract*
 
-## Contract
-
-We start with *Contract* variable. 
 ```{r}
 mod4 <- glm(Churn ~ tenure + MonthlyCharges + Contract, data=train, family=binomial)
 AIC(mod4) #4302.2 better
@@ -545,8 +554,7 @@ vif(mod4)
 ```
 We add the parameter because it improves the model.
 
-## InternetService
-
+**InternetService**
 
 ```{r}
 mod5 <- glm(Churn ~ tenure + MonthlyCharges + Contract + InternetService, data=train, family=binomial)
@@ -555,32 +563,36 @@ anova( mod4, mod5,  test="Chisq") #significant
 vif(mod5)
 ```
 
+**StreamingMovies**
 
-## StreamingMovies
 
-```{r}
-mod6 <- glm(Churn ~ tenure + MonthlyCharges + Contract + InternetService + StreamingMovies, data=train, family=binomial)
+```{r, fig.align='center'}
+mod6 <- glm(Churn ~ tenure + MonthlyCharges + Contract + InternetService + 
+              StreamingMovies, data=train, family=binomial)
 AIC(mod6) #4238.6 better
 anova( mod5, mod6,  test="Chisq") #significant
 vif(mod6)
 ```
 The model has improved but the VIF is becoming higher.
 
-## StreamingTV
+
+**StreamingTV**
 
 ```{r}
-mod7 <- glm(Churn ~ tenure + MonthlyCharges + Contract + InternetService + StreamingMovies + StreamingTV, data=train, family=binomial)
+mod7 <- glm(Churn ~ tenure + MonthlyCharges + Contract + InternetService + 
+              StreamingMovies + StreamingTV, data=train, family=binomial)
 AIC(mod7) #4213.5 better
 anova( mod6, mod7,  test="Chisq") #significant
 vif(mod7)
 ```
 
-*MonthlyCharges* has a high VIF. We'll may need to add transformations or maybe discard this variable For now, we will keep the parameters that we have been adding.
+*MonthlyCharges* has a high VIF. We'll may need to add transformations or maybe discard this variable. For now, we will keep the parameters that we have been adding.
 
-## TechSupport
+**TechSupport**
 
 ```{r}
-mod8 <- glm(Churn ~ tenure + MonthlyCharges + Contract + InternetService + StreamingMovies + StreamingTV + TechSupport, data=train, family=binomial)
+mod8 <- glm(Churn ~ tenure + MonthlyCharges + Contract + InternetService + 
+      StreamingMovies + StreamingTV + TechSupport, data=train, family=binomial)
 #summary(mod8) #4208.3 better
 AIC(mod8)
 anova( mod7, mod8,  test="Chisq") #significant
@@ -589,11 +601,12 @@ vif(mod8)
 
 Including *TechSupport* improves the model.
 
-
-## DeviceProtection
+**DeviceProtection**
 
 ```{r}
-mod9 <- glm(Churn ~ tenure + MonthlyCharges + Contract + InternetService + StreamingMovies + StreamingTV + TechSupport + DeviceProtection, data=train, family=binomial)
+mod9 <- glm(Churn ~ tenure + MonthlyCharges + Contract + InternetService + 
+            StreamingMovies + StreamingTV + TechSupport + DeviceProtection, 
+            data=train, family=binomial)
 summary(mod9) #4209.3 worse
 AIC(mod9)
 anova( mod8, mod9,  test="Chisq") #not significant
@@ -602,107 +615,130 @@ anova( mod8, mod9,  test="Chisq") #not significant
 
 We don't add the variable to the model. It does not improve it.
 
-
-## OnlineBackup
+**OnlineBackup**
 
 ```{r}
-mod10 <- glm(Churn ~ tenure + MonthlyCharges + Contract + InternetService + StreamingMovies + StreamingTV + TechSupport + OnlineBackup, data=train, family=binomial)
+mod10 <- glm(Churn ~ tenure + MonthlyCharges + Contract + InternetService + 
+               StreamingMovies + StreamingTV + TechSupport + OnlineBackup, 
+             data=train, family=binomial)
 AIC(mod10) #4209.6 worse
 anova( mod8, mod10,  test="Chisq") #not significant
 ```
 We don't add the variable to the model. It does not improve it.
 
-## OnlineSecurity
+**OnlineSecurity**
 
 ```{r}
-mod11 <- glm(Churn ~ tenure + MonthlyCharges + Contract + InternetService + StreamingMovies + StreamingTV + TechSupport + OnlineSecurity, data=train, family=binomial)
+mod11 <- glm(Churn ~ tenure + MonthlyCharges + Contract + InternetService + 
+               StreamingMovies + StreamingTV + TechSupport + OnlineSecurity, 
+             data=train, family=binomial)
 AIC(mod11) #4199 better
 anova( mod8, mod11,  test="Chisq") #significant
+vif(mod11)
 ```
 
-We keep the variable
+We keep the variable. We still have multicollinearity, but we'll deal with it later.
 
-## PaperlessBilling
+**PaperlessBilling**
 
 ```{r}
-mod12 <- glm(Churn ~ tenure + MonthlyCharges + Contract + InternetService + StreamingMovies + StreamingTV + TechSupport + OnlineSecurity + PaperlessBilling, data=train, family=binomial)
+mod12 <- glm(Churn ~ tenure + MonthlyCharges + Contract + InternetService + 
+               StreamingMovies + StreamingTV + TechSupport + OnlineSecurity +
+               PaperlessBilling, data=train, family=binomial)
 summary(mod12) #4184.5 better
 AIC(mod12)
 anova( mod11, mod12,  test="Chisq") #significant
 vif(mod12)
 ```
 
-We keep the variable
+We keep the variable because it improves the model.
 
-## Dependents
+**Dependents**
 
 ```{r}
-mod13 <- glm(Churn ~ tenure + MonthlyCharges + Contract + InternetService + StreamingMovies + StreamingTV + TechSupport + OnlineSecurity + PaperlessBilling + Dependents, data=train, family=binomial)
+mod13 <- glm(Churn ~ tenure + MonthlyCharges + Contract + InternetService + 
+               StreamingMovies + StreamingTV + TechSupport + OnlineSecurity + 
+               PaperlessBilling + Dependents, data=train, family=binomial)
 summary(mod13) #4177.2 better
 AIC(mod13)
 anova( mod12, mod13,  test="Chisq") #significant
 vif(mod13)
 ```
 
-We keep the variable
+We keep the variable because it improves the model.
 
-## MultipleLines
+**MultipleLines**
 
 ```{r}
-
-mod14 <- glm(Churn ~ tenure + MonthlyCharges + Contract + InternetService + StreamingMovies + StreamingTV + TechSupport + OnlineSecurity + PaperlessBilling + Dependents + MultipleLines, data=train, family=binomial)
+mod14 <- glm(Churn ~ tenure + MonthlyCharges + Contract + InternetService + 
+               StreamingMovies + StreamingTV + TechSupport + OnlineSecurity + 
+               PaperlessBilling + Dependents + MultipleLines,
+             data=train, family=binomial)
 AIC(mod14) #4162.2 better
 anova( mod13, mod14,  test="Chisq") #significant
 vif(mod14)
-
 ```
 
-We keep the variable
+We keep the variable because it improves the model.
 
-## SeniorCitizen
+**SeniorCitizen**
 
 ```{r}
-mod15 <- glm(Churn ~ tenure + MonthlyCharges + Contract + InternetService + StreamingMovies + StreamingTV + TechSupport + OnlineSecurity + PaperlessBilling + Dependents + MultipleLines + SeniorCitizen, data=train, family=binomial)
+mod15 <- glm(Churn ~ tenure + MonthlyCharges + Contract + InternetService +
+               StreamingMovies + StreamingTV + TechSupport + OnlineSecurity +
+               PaperlessBilling + Dependents + MultipleLines + SeniorCitizen,
+             data=train, family=binomial)
 AIC(mod15) #4155.7 better
 anova( mod14, mod15,  test="Chisq") #significant
 vif(mod15)
 ```
 
-We keep the variable
+We keep the variable because it improves the model.
 
-## Partner
+**Partner**
 
 ```{r}
-mod16 <- glm(Churn ~ tenure + MonthlyCharges + Contract + InternetService + StreamingMovies + StreamingTV + TechSupport + OnlineSecurity + PaperlessBilling + Dependents + MultipleLines + SeniorCitizen + Partner, data=train, family=binomial)
+mod16 <- glm(Churn ~ tenure + MonthlyCharges + Contract + InternetService + 
+               StreamingMovies + StreamingTV + TechSupport + OnlineSecurity + 
+               PaperlessBilling + Dependents + MultipleLines + SeniorCitizen + 
+               Partner, data=train, family=binomial)
 AIC(mod16) #4157.7 worse
 anova( mod15, mod16,  test="Chisq") #not significant
 ```
 
-We don't keep the variable
+We don't keep the variable because it does not improve the model.
 
-## PaymentMethod
+**PaymentMethod**
 
 ```{r}
-mod17 <- glm(Churn ~ tenure + MonthlyCharges + Contract + InternetService + StreamingMovies + StreamingTV + TechSupport + OnlineSecurity + PaperlessBilling + Dependents + MultipleLines + SeniorCitizen + PaymentMethod, data=train, family=binomial) 
+mod17 <- glm(Churn ~ tenure + MonthlyCharges + Contract + InternetService + 
+               StreamingMovies + StreamingTV + TechSupport + OnlineSecurity + 
+               PaperlessBilling + Dependents + MultipleLines + SeniorCitizen + 
+               PaymentMethod, data=train, family=binomial) 
 AIC(mod17) #4139.4 better
 anova( mod15, mod17,  test="Chisq") #significant
 vif(mod17)
 ```
 
+We keep the variable because it improves the model.
 
-## PhoneService
+**PhoneService**
 
 ```{r}
-mod18 <- glm(Churn ~ tenure + MonthlyCharges + Contract + InternetService + StreamingMovies + StreamingTV + TechSupport + OnlineSecurity + PaperlessBilling + Dependents + MultipleLines + SeniorCitizen + PaymentMethod + PhoneService, data=train, family=binomial)
+mod18 <- glm(Churn ~ tenure + MonthlyCharges + Contract + InternetService + 
+               StreamingMovies + StreamingTV + TechSupport + OnlineSecurity + 
+               PaperlessBilling + Dependents + MultipleLines + SeniorCitizen + 
+               PaymentMethod + PhoneService, data=train, family=binomial)
 AIC(mod18)#4139.4 it does not change anything
 anova( mod17, mod18,  test="Chisq") #not significant
 ```
 
-We don't include the parameter
+We don't include the parameter because it does not improve the model.
 
-## Inlfuential data
+### Inlfuential data
 
-We check the influential data after including the categorical variables 
+We check the influential data after including all categorical variables .
+
 ```{r}
 infl_2 <- influence.measures(mod17)
 
@@ -721,10 +757,13 @@ The influential data has reduced until 98 tuples.
 
 We need to search for interactions. Possible interactions:
 
-- Dependents and Multiple Lines
+#### Dependents and Multiple Lines
 
 ```{r}
-mod19 <- glm(Churn ~ tenure + MonthlyCharges + Contract + InternetService + StreamingMovies + StreamingTV + TechSupport + OnlineSecurity + PaperlessBilling + Dependents * MultipleLines + SeniorCitizen + PaymentMethod, data=train, family=binomial)
+mod19 <- glm(Churn ~ tenure + MonthlyCharges + Contract + InternetService + 
+               StreamingMovies + StreamingTV + TechSupport + OnlineSecurity +
+               PaperlessBilling + Dependents * MultipleLines + SeniorCitizen + 
+               PaymentMethod, data=train, family=binomial)
  #4140.4 worse
 AIC(mod19)
 anova( mod17, mod19,  test="Chisq") #not significant
@@ -732,17 +771,21 @@ anova( mod17, mod19,  test="Chisq") #not significant
 We don't include the interaction since it is not significative
 
 
-- MonthlyCharges and InternetService
+**MonthlyCharges and InternetService**
 
 ```{r}
-mod20 <- glm(Churn ~ tenure + InternetService * MonthlyCharges + Contract + StreamingMovies + StreamingTV + TechSupport + OnlineSecurity + PaperlessBilling + Dependents + MultipleLines + SeniorCitizen + PaymentMethod, data=train, family=binomial)
+mod20 <- glm(Churn ~ tenure + InternetService * MonthlyCharges + Contract + 
+               StreamingMovies + StreamingTV + TechSupport + OnlineSecurity + 
+               PaperlessBilling + Dependents + MultipleLines + SeniorCitizen + 
+               PaymentMethod, data=train, family=binomial)
 AIC(mod20) #4133.7 better
 anova( mod17, mod20,  test="Chisq") #significant
 vif(mod20)
 ```
 
+This interaction is significative
 
-- SeniorCitizen and PaymentMethod
+**SeniorCitizen and PaymentMethod**
 
 ```{r}
 mod21 <- glm(Churn ~ tenure + InternetService + MonthlyCharges + Contract + StreamingMovies + StreamingTV + TechSupport + OnlineSecurity + PaperlessBilling + Dependents + MultipleLines + SeniorCitizen * PaymentMethod, data=train, family=binomial)
@@ -761,18 +804,23 @@ vif(mod22)
 ```
 Having both interactions improves the model but VIF gets worse. The best model is with SeniorCitizen and PaymentMethod interaction (mod21)
 
-
-###Second Order variable
+**Second Order variable**
 
 ```{r}
-mod23 <- glm(Churn ~ tenure + I(tenure^2) + InternetService + MonthlyCharges + Contract + StreamingMovies + StreamingTV + TechSupport + OnlineSecurity + PaperlessBilling + Dependents + MultipleLines + SeniorCitizen * PaymentMethod, data=train, family=binomial)
+mod23 <- glm(Churn ~ tenure + I(tenure^2) + InternetService + MonthlyCharges + 
+               Contract + StreamingMovies + StreamingTV + TechSupport + 
+               OnlineSecurity + PaperlessBilling + Dependents + MultipleLines + 
+               SeniorCitizen * PaymentMethod, data=train, family=binomial)
 AIC(mod23) #4088.4 better
 anova( mod21, mod23,  test="Chisq") #significant
 vif(mod23)
 ```
 
 ```{r}
-mod23.1 <- glm(Churn ~ tenure + I(tenure^2) + InternetService + Contract + StreamingMovies + StreamingTV + TechSupport + OnlineSecurity + PaperlessBilling + Dependents + MultipleLines + SeniorCitizen * PaymentMethod, data=train, family=binomial)
+mod23.1 <- glm(Churn ~ tenure + I(tenure^2) + InternetService + Contract + 
+                 StreamingMovies + StreamingTV + TechSupport + OnlineSecurity + 
+                 PaperlessBilling + Dependents + MultipleLines + 
+                 SeniorCitizen * PaymentMethod, data=train, family=binomial)
 AIC(mod23.1) #4093.9 worse
 anova( mod23, mod23.1,  test="Chisq") #significant
 vif(mod23.1) #better vif
@@ -783,109 +831,102 @@ Removing *MonthlyCharges* from the model is getting a bit worse the AIC but the 
 For improving the multicollinearity we add log in *tenure*
 
 ```{r}
-
-mod23.4 <- glm(Churn ~ log(tenure + 0.01) + I(tenure^2) + InternetService + Contract + StreamingMovies + StreamingTV + TechSupport + OnlineSecurity + PaperlessBilling + Dependents + MultipleLines + SeniorCitizen * PaymentMethod, data=train, family=binomial)
+mod23.4 <- glm(Churn ~ log(tenure + 0.01) + I(tenure^2) + InternetService + 
+                 Contract + StreamingMovies + StreamingTV + TechSupport + 
+                 OnlineSecurity + PaperlessBilling + Dependents + MultipleLines
+               + SeniorCitizen * PaymentMethod, data=train, family=binomial)
 AIC(mod23.4) #4059.53
 vif(mod23.4)
 ```
 
-We keep this last model.
+We keep this last model because we have the best AIC with the best VIF. 
 
 
 ### Inlfuential data
 
-We check the influential data after including the interactions and the second order variables. 
+We check the influential data after including the interactions and the second order variable. 
 ```{r}
 infl_3 <- influence.measures(mod23.4)
-
 sum(residuals(mod23.4,'deviance')^2)
 sum(residuals(mod23.4,'pearson')^2)
-
 influential_indices_3 <- which(infl_3$is.inf == TRUE)
 length(influential_indices_3)
 length(train$customerID)
-
 #Leverage values
 plot(hatvalues(mod23.1), pch = 19, main = "Leverage Plot")
-abline(h = 2 * ncol(model.matrix(mod23.1))/length(df$customerID), col = "red", lty = 2)
+abline(h = 2 * ncol(model.matrix(mod23.1))/length(df$customerID), 
+       col = "red", lty = 2)
 ```
 
 We have more influential data than before, 399 tuples. We see that they are distributed randomly. We consider to not delete this data because it gives us important information for the model.
 
-## Residuals
+### Residuals
 
-```{r}
-residualPlot(mod23.4)
+```{r, echo=FALSE}
+residualPlots(mod23.4)
 ```
 
-We see that we have improved the residuals.
+We see that we have improved the residuals of the model. We can observe that we have homoscedasticity because they are randomly distributed considering that the model is binary.
 
 ### Predictions
 
 
 ```{r}
-rmse <- function(fitted, actual){
-  sqrt(mean((fitted - actual)^2))
-}
-
-RSQUARE <- function(predictions, actual_values) {
-  ss_residual <- sum((actual_values - predictions)^2)
-  ss_total <- sum((actual_values - mean(actual_values))^2)
-  rsquare <- 1 - (ss_residual / ss_total)
-  return(rsquare)
-}
-```
-
-
-```{r}
 #selecting the parameters that we have in the model
-
 test_data <- test[c(3,5,6,8,9,10,13,14,15,16,17,18)]
-
 pred_prob <- predict(mod23.4, newdata = test_data, type="response")
-
 churn_pred<- ifelse(pred_prob>0.5,"Yes","No")
-
 table(churn_pred)
 table(test$Churn)
-
 #Confusion table
-
 tt <- table(churn_pred, test$Churn);tt
 100*sum(diag(tt))/sum(tt) #80.79
-
 ```
 
 The accuracy of our model is good, it is $80.79%$.
 
 ```{r}
-
 roc_curve <- roc(test$Churn, pred_prob)
-
 # Plot the ROC curve
 plot(roc_curve, main = "ROC Curve", col = "blue", lwd = 2)
-
 # Add diagonal reference line for comparison
 abline(a = 0, b = 1, lty = 2, col = "red")
-
 # Add AUC (Area Under the Curve) value to the plot
 text(0.8, 0.2, paste("AUC =", round(auc(roc_curve), 2)), col = "blue", cex = 1.2)
-
 ```
 
 Our Area Under the Curve for ROC curve is 0.85 so it is high.
 
 
-Our final model is
+#Interpretation
 
-```{r}
+## Final Model
+
+Our **final model** is:
+
+```{r, include=FALSE}
 coef(mod23.4)
 ```
 
-$$Y = -0.58 - 0.08 tenure + 0.0007 tenure^2 + 0.75 InternetServiceFiber optic - 0.92 InternetServiceNo - 0.72 ContractOne year - 1.88 ContractTwo year + 0.24 StreamingMoviesYes + 0.33 StreamingTVYes - 0.24 TechSupportYes - 0.29 Online SecurityYes + 0.32 PaperlessBillingYes - 0.21 DependentsYes + 0.31 MultipleLinesYes - 0.13 SeniorCitizen1 - 0.26 PaymentMethodCredit card + 0.28 PaymentMethodElectronic check - 0.20 PaymentMethodMailed check + 0.82 SeniorCitizen1:PaymentMethodCredit card + 0.29 SeniorCitizen1: PaymentMethodElectronic check + 1.05 SeniorCitizen1:PaymentMethodMailed check$$
+\[
+\begin{aligned}
+Y &= -0.58 - 0.5 \cdot log(\text{tenure}+0.01) + 0.00005 \cdot \text{tenure}^2 \\
+&\quad + 0.54 \cdot \text{InternetServiceFiber optic} - 0.97 \cdot \text{InternetServiceNo} \\
+&\quad - 0.75 \cdot \text{ContractOne year} - 1.90 \cdot \text{ContractTwo year} \\
+&\quad + 0.26 \cdot \text{StreamingMoviesYes} + 0.33 \cdot \text{StreamingTVYes} \\
+&\quad - 0.22 \cdot \text{TechSupportYes} - 0.28 \cdot \text{Online SecurityYes} \\
+&\quad + 0.33 \cdot \text{PaperlessBillingYes} - 0.23 \cdot \text{DependentsYes} \\
+&\quad + 0.32 \cdot \text{MultipleLinesYes} - 0.15 \cdot \text{SeniorCitizen1} \\
+&\quad - 0.25 \cdot \text{PaymentMethodCredit card} + 0.27 \cdot \text{PaymentMethodElectronic check} \\
+&\quad - 0.25 \cdot \text{PaymentMethodMailed check} \\
+&\quad + 0.87 \cdot \text{SeniorCitizen1:PaymentMethodCredit card} \\
+&\quad + 0.28 \cdot \text{SeniorCitizen1: PaymentMethodElectronic check} \\
+&\quad + 1.10 \cdot \text{SeniorCitizen1:PaymentMethodMailed check}
+\end{aligned}
+\]
 
 
-\\
+\newpage
 
 # Annex
 
