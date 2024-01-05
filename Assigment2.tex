@@ -5,19 +5,16 @@
 \documentclass[
   twoside]{article}
 \usepackage{amsmath,amssymb}
+\usepackage{lmodern}
 \usepackage{iftex}
 \ifPDFTeX
   \usepackage[T1]{fontenc}
   \usepackage[utf8]{inputenc}
   \usepackage{textcomp} % provide euro and other symbols
 \else % if luatex or xetex
-  \usepackage{unicode-math} % this also loads fontspec
+  \usepackage{unicode-math}
   \defaultfontfeatures{Scale=MatchLowercase}
   \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
-\fi
-\usepackage{lmodern}
-\ifPDFTeX\else
-  % xetex/luatex font selection
 \fi
 % Use upquote if available, for straight quotes in verbatim environments
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
@@ -48,13 +45,13 @@
 \newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
 \newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
 \newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
-\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
 \newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
 \newcommand{\BuiltInTok}[1]{#1}
 \newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
 \newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
 \newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
-\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
 \newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
 \newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
 \newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
@@ -62,7 +59,7 @@
 \newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
 \newcommand{\ExtensionTok}[1]{#1}
 \newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
-\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
 \newcommand{\ImportTok}[1]{#1}
 \newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
 \newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
@@ -71,7 +68,7 @@
 \newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
 \newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
 \newcommand{\RegionMarkerTok}[1]{#1}
-\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
 \newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
 \newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
 \newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
@@ -99,7 +96,7 @@
 \fi
 \IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
 \IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
-\urlstyle{same}
+\urlstyle{same} % disable monospaced font for URLs
 \hypersetup{
   pdftitle={Assignment 2},
   pdfauthor={Alícia Chimeno Sarabia and Bruna Barraquer Torres},
@@ -118,11 +115,6 @@
 \tableofcontents
 }
 \newpage
-
-\hypertarget{data-context}{%
-\section{Data context}\label{data-context}}
-
-This dataset contains information about customers. Demographic data,
 
 \hypertarget{data-exploration}{%
 \section{Data exploration}\label{data-exploration}}
@@ -1589,6 +1581,10 @@ Including \emph{TechSupport} improves the model.
 ##     StreamingMovies + StreamingTV + TechSupport + DeviceProtection, 
 ##     family = binomial, data = train)
 ## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -1.7717  -0.6683  -0.2984   0.7723   3.1679  
+## 
 ## Coefficients:
 ##                            Estimate Std. Error z value Pr(>|z|)    
 ## (Intercept)                 0.20725    0.24332   0.852 0.394345    
@@ -1753,6 +1749,10 @@ with it later.
 ##     StreamingMovies + StreamingTV + TechSupport + OnlineSecurity + 
 ##     PaperlessBilling, family = binomial, data = train)
 ## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -1.8020  -0.6855  -0.2930   0.7658   3.1924  
+## 
 ## Coefficients:
 ##                             Estimate Std. Error z value Pr(>|z|)    
 ## (Intercept)                -0.206715   0.251517  -0.822 0.411150    
@@ -1848,6 +1848,10 @@ We keep the variable because it improves the model.
 ## glm(formula = Churn ~ tenure + MonthlyCharges + Contract + InternetService + 
 ##     StreamingMovies + StreamingTV + TechSupport + OnlineSecurity + 
 ##     PaperlessBilling + Dependents, family = binomial, data = train)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -1.8158  -0.6832  -0.2973   0.7559   3.1478  
 ## 
 ## Coefficients:
 ##                             Estimate Std. Error z value Pr(>|z|)    
@@ -2935,6 +2939,23 @@ Y &= -0.58 - 0.5 \cdot log(\text{tenure}+0.01) + 0.00005 \cdot \text{tenure}^2 \
 \end{aligned}
 \]
 
+We can observe in our final model that there are parameters with a
+negative with the target variable. These variables are categorical, this
+means that when this event happens, it is less probable that the
+costumer churns. In this case, we see that if they have a contract of
+one year it is less probable that they churn, but even more less
+probable when the contract is for two years. We can also interpret that
+if the costumer has internet service it also reduces the probabilities
+for the costumer to leave the company.
+
+On the other hand, we can see parameters that have a positive relation
+with the target variable. This implies that when the event for the
+categorical variable happens, it is more probable that the costumer will
+churn. For example, if the costumer is a senior citizen and the payment
+method is mailed check it is more probable that the costumer will leave
+the company.We can also see that if the costumer has multiple lines it
+also increases the probabilities for the costumer to churn.
+
 \newpage
 
 \hypertarget{annex}{%
@@ -2970,6 +2991,10 @@ Y &= -0.58 - 0.5 \cdot log(\text{tenure}+0.01) + 0.00005 \cdot \text{tenure}^2 \
 ## Call:
 ## glm(formula = Churn ~ gender, family = binomial, data = train)
 ## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -0.7894  -0.7894  -0.7776   1.6235   1.6393  
+## 
 ## Coefficients:
 ##             Estimate Std. Error z value Pr(>|z|)    
 ## (Intercept) -1.00637    0.04542 -22.158   <2e-16 ***
@@ -2997,6 +3022,10 @@ Y &= -0.58 - 0.5 \cdot log(\text{tenure}+0.01) + 0.00005 \cdot \text{tenure}^2 \
 ## 
 ## Call:
 ## glm(formula = Churn ~ SeniorCitizen, family = binomial, data = train)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -1.0497  -0.7288  -0.7288   1.3107   1.7064  
 ## 
 ## Coefficients:
 ##                Estimate Std. Error z value Pr(>|z|)    
@@ -3026,6 +3055,10 @@ Y &= -0.58 - 0.5 \cdot log(\text{tenure}+0.01) + 0.00005 \cdot \text{tenure}^2 \
 ## Call:
 ## glm(formula = Churn ~ Partner, family = binomial, data = train)
 ## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -0.8946  -0.8946  -0.6573   1.4895   1.8102  
+## 
 ## Coefficients:
 ##             Estimate Std. Error z value Pr(>|z|)    
 ## (Intercept) -0.70909    0.04215  -16.82   <2e-16 ***
@@ -3053,6 +3086,10 @@ Y &= -0.58 - 0.5 \cdot log(\text{tenure}+0.01) + 0.00005 \cdot \text{tenure}^2 \
 ## 
 ## Call:
 ## glm(formula = Churn ~ Dependents, family = binomial, data = train)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -0.8682  -0.8682  -0.5642   1.5221   1.9577  
 ## 
 ## Coefficients:
 ##               Estimate Std. Error z value Pr(>|z|)    
@@ -3082,6 +3119,10 @@ Y &= -0.58 - 0.5 \cdot log(\text{tenure}+0.01) + 0.00005 \cdot \text{tenure}^2 \
 ## Call:
 ## glm(formula = Churn ~ tenure, family = binomial, data = train)
 ## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -1.1818  -0.8360  -0.4898   1.1893   2.3715  
+## 
 ## Coefficients:
 ##              Estimate Std. Error z value Pr(>|z|)    
 ## (Intercept)  0.010348   0.050517   0.205    0.838    
@@ -3109,6 +3150,10 @@ Y &= -0.58 - 0.5 \cdot log(\text{tenure}+0.01) + 0.00005 \cdot \text{tenure}^2 \
 ## 
 ## Call:
 ## glm(formula = Churn ~ PhoneService, family = binomial, data = train)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -0.7876  -0.7876  -0.7876   1.6259   1.6844  
 ## 
 ## Coefficients:
 ##                 Estimate Std. Error z value Pr(>|z|)    
@@ -3138,6 +3183,10 @@ Y &= -0.58 - 0.5 \cdot log(\text{tenure}+0.01) + 0.00005 \cdot \text{tenure}^2 \
 ## Call:
 ## glm(formula = Churn ~ MultipleLines, family = binomial, data = train)
 ## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -0.8283  -0.8283  -0.7504   1.5726   1.6763  
+## 
 ## Coefficients:
 ##                  Estimate Std. Error z value Pr(>|z|)    
 ## (Intercept)      -1.12350    0.04348 -25.841  < 2e-16 ***
@@ -3165,6 +3214,10 @@ Y &= -0.58 - 0.5 \cdot log(\text{tenure}+0.01) + 0.00005 \cdot \text{tenure}^2 \
 ## 
 ## Call:
 ## glm(formula = Churn ~ InternetService, family = binomial, data = train)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -1.0398  -1.0398  -0.6431   1.3215   2.3065  
 ## 
 ## Coefficients:
 ##                            Estimate Std. Error z value Pr(>|z|)    
@@ -3195,6 +3248,10 @@ Y &= -0.58 - 0.5 \cdot log(\text{tenure}+0.01) + 0.00005 \cdot \text{tenure}^2 \
 ## Call:
 ## glm(formula = Churn ~ OnlineSecurity, family = binomial, data = train)
 ## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -0.8625  -0.8625  -0.5630   1.5292   1.9598  
+## 
 ## Coefficients:
 ##                   Estimate Std. Error z value Pr(>|z|)    
 ## (Intercept)       -0.79719    0.03633  -21.94   <2e-16 ***
@@ -3222,6 +3279,10 @@ Y &= -0.58 - 0.5 \cdot log(\text{tenure}+0.01) + 0.00005 \cdot \text{tenure}^2 \
 ## 
 ## Call:
 ## glm(formula = Churn ~ OnlineBackup, family = binomial, data = train)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -0.8221  -0.8221  -0.7079   1.5805   1.7359  
 ## 
 ## Coefficients:
 ##                 Estimate Std. Error z value Pr(>|z|)    
@@ -3251,6 +3312,10 @@ Y &= -0.58 - 0.5 \cdot log(\text{tenure}+0.01) + 0.00005 \cdot \text{tenure}^2 \
 ## Call:
 ## glm(formula = Churn ~ DeviceProtection, family = binomial, data = train)
 ## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -0.8147  -0.8147  -0.7228   1.5901   1.7148  
+## 
 ## Coefficients:
 ##                     Estimate Std. Error z value Pr(>|z|)    
 ## (Intercept)         -0.93239    0.03909 -23.852  < 2e-16 ***
@@ -3278,6 +3343,10 @@ Y &= -0.58 - 0.5 \cdot log(\text{tenure}+0.01) + 0.00005 \cdot \text{tenure}^2 \
 ## 
 ## Call:
 ## glm(formula = Churn ~ TechSupport, family = binomial, data = train)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -0.8594  -0.8594  -0.5874   1.5331   1.9196  
 ## 
 ## Coefficients:
 ##                Estimate Std. Error z value Pr(>|z|)    
@@ -3307,6 +3376,10 @@ Y &= -0.58 - 0.5 \cdot log(\text{tenure}+0.01) + 0.00005 \cdot \text{tenure}^2 \
 ## Call:
 ## glm(formula = Churn ~ StreamingTV, family = binomial, data = train)
 ## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -0.8464  -0.8464  -0.7424   1.5495   1.6873  
+## 
 ## Coefficients:
 ##                Estimate Std. Error z value Pr(>|z|)    
 ## (Intercept)    -1.14795    0.04263 -26.931  < 2e-16 ***
@@ -3335,6 +3408,10 @@ Y &= -0.58 - 0.5 \cdot log(\text{tenure}+0.01) + 0.00005 \cdot \text{tenure}^2 \
 ## Call:
 ## glm(formula = Churn ~ StreamingMovies, family = binomial, data = train)
 ## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -0.8342  -0.8342  -0.7498   1.5650   1.6770  
+## 
 ## Coefficients:
 ##                    Estimate Std. Error z value Pr(>|z|)    
 ## (Intercept)        -1.12512    0.04254 -26.449  < 2e-16 ***
@@ -3362,6 +3439,10 @@ Y &= -0.58 - 0.5 \cdot log(\text{tenure}+0.01) + 0.00005 \cdot \text{tenure}^2 \
 ## 
 ## Call:
 ## glm(formula = Churn ~ Contract, family = binomial, data = train)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -1.0490  -1.0490  -0.4923   1.3115   2.6944  
 ## 
 ## Coefficients:
 ##                  Estimate Std. Error z value Pr(>|z|)    
@@ -3392,6 +3473,10 @@ Y &= -0.58 - 0.5 \cdot log(\text{tenure}+0.01) + 0.00005 \cdot \text{tenure}^2 \
 ## Call:
 ## glm(formula = Churn ~ PaperlessBilling, family = binomial, data = train)
 ## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -0.9003  -0.9003  -0.5994   1.4825   1.9001  
+## 
 ## Coefficients:
 ##                     Estimate Std. Error z value Pr(>|z|)    
 ## (Intercept)         -1.62562    0.06013  -27.04   <2e-16 ***
@@ -3419,6 +3504,10 @@ Y &= -0.58 - 0.5 \cdot log(\text{tenure}+0.01) + 0.00005 \cdot \text{tenure}^2 \
 ## 
 ## Call:
 ## glm(formula = Churn ~ PaymentMethod, family = binomial, data = train)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -1.0988  -0.6466  -0.6073   1.2581   1.9537  
 ## 
 ## Coefficients:
 ##                                      Estimate Std. Error z value Pr(>|z|)    
@@ -3450,6 +3539,10 @@ Y &= -0.58 - 0.5 \cdot log(\text{tenure}+0.01) + 0.00005 \cdot \text{tenure}^2 \
 ## Call:
 ## glm(formula = Churn ~ MonthlyCharges, family = binomial, data = train)
 ## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -1.0858  -0.8479  -0.6574   1.3652   1.9844  
+## 
 ## Coefficients:
 ##                 Estimate Std. Error z value Pr(>|z|)    
 ## (Intercept)    -2.120267   0.090047  -23.55   <2e-16 ***
@@ -3477,6 +3570,10 @@ Y &= -0.58 - 0.5 \cdot log(\text{tenure}+0.01) + 0.00005 \cdot \text{tenure}^2 \
 ## 
 ## Call:
 ## glm(formula = Churn ~ TotalCharges, family = binomial, data = train)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -0.9463  -0.8675  -0.6810   1.4321   2.2323  
 ## 
 ## Coefficients:
 ##                Estimate Std. Error z value Pr(>|z|)    
@@ -3518,6 +3615,44 @@ Y &= -0.58 - 0.5 \cdot log(\text{tenure}+0.01) + 0.00005 \cdot \text{tenure}^2 \
 ## mod13  2 5676.581
 ## mod14  2 5683.895
 \end{verbatim}
+
+\#\#Multivariate outliers de la library mvoutliers
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(chemometrics)}
+\NormalTok{res.out }\OtherTok{\textless{}{-}} \FunctionTok{Moutlier}\NormalTok{(df[, }\FunctionTok{c}\NormalTok{(}\DecValTok{6}\NormalTok{,}\DecValTok{19}\NormalTok{,}\DecValTok{20}\NormalTok{)], }\AttributeTok{quantile =} \FloatTok{0.98}\NormalTok{, }\AttributeTok{col =} \StringTok{"blue"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Assigment2_files/figure-latex/unnamed-chunk-83-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{length}\NormalTok{(}\FunctionTok{which}\NormalTok{((res.out}\SpecialCharTok{$}\NormalTok{md }\SpecialCharTok{\textgreater{}}\NormalTok{ res.out}\SpecialCharTok{$}\NormalTok{cutoff) }\SpecialCharTok{\&}\NormalTok{ (res.out}\SpecialCharTok{$}\NormalTok{rd }\SpecialCharTok{\textgreater{}}\NormalTok{ res.out}\SpecialCharTok{$}\NormalTok{cutoff))) }\SpecialCharTok{/} \DecValTok{7043}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.02484737
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{par}\NormalTok{(}\AttributeTok{mfrow =} \FunctionTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{, }\DecValTok{1}\NormalTok{))}
+\FunctionTok{plot}\NormalTok{(res.out}\SpecialCharTok{$}\NormalTok{md, res.out}\SpecialCharTok{$}\NormalTok{rd)}
+\FunctionTok{abline}\NormalTok{(}\AttributeTok{h =}\NormalTok{ res.out}\SpecialCharTok{$}\NormalTok{cutoff, }\AttributeTok{col =} \StringTok{"red"}\NormalTok{)}
+\FunctionTok{abline}\NormalTok{(}\AttributeTok{v =}\NormalTok{ res.out}\SpecialCharTok{$}\NormalTok{cutoff, }\AttributeTok{col =} \StringTok{"red"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Assigment2_files/figure-latex/unnamed-chunk-83-2.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{ll\_mvo }\OtherTok{\textless{}{-}} \FunctionTok{which}\NormalTok{((res.out}\SpecialCharTok{$}\NormalTok{md }\SpecialCharTok{\textgreater{}}\NormalTok{ res.out}\SpecialCharTok{$}\NormalTok{cutoff) }\SpecialCharTok{\&}\NormalTok{ (res.out}\SpecialCharTok{$}\NormalTok{rd }\SpecialCharTok{\textgreater{}}\NormalTok{ res.out}\SpecialCharTok{$}\NormalTok{cutoff))}
+\end{Highlighting}
+\end{Shaded}
 
 \hypertarget{balanced-data}{%
 \subsection{Balanced data}\label{balanced-data}}
@@ -3636,6 +3771,10 @@ an authomatic step.
 ##     StreamingTV + PhoneService + Dependents, family = binomial, 
 ##     data = data_balanced_under)
 ## 
+## Deviance Residuals: 
+##      Min        1Q    Median        3Q       Max  
+## -2.75110  -0.70281   0.02844   0.74849   3.02235  
+## 
 ## Coefficients:
 ##                                      Estimate Std. Error z value Pr(>|z|)    
 ## (Intercept)                           1.02610    1.74560   0.588 0.556651    
@@ -3698,6 +3837,10 @@ an authomatic step.
 ##     0.01) + Contract + InternetService + PaymentMethod + OnlineBackup + 
 ##     MultipleLines + PaperlessBilling + SeniorCitizen + DeviceProtection + 
 ##     StreamingMovies + StreamingTV, family = binomial, data = data_balanced_under)
+## 
+## Deviance Residuals: 
+##      Min        1Q    Median        3Q       Max  
+## -2.70917  -0.70332   0.02829   0.74897   3.08234  
 ## 
 ## Coefficients:
 ##                                      Estimate Std. Error z value Pr(>|z|)    
@@ -3775,6 +3918,10 @@ an authomatic step.
 ##     PaymentMethod + OnlineBackup + MultipleLines + PaperlessBilling + 
 ##     SeniorCitizen + DeviceProtection + StreamingMovies + StreamingTV, 
 ##     family = binomial, data = data_balanced_under)
+## 
+## Deviance Residuals: 
+##      Min        1Q    Median        3Q       Max  
+## -2.60462  -0.71445   0.03647   0.74719   3.10624  
 ## 
 ## Coefficients:
 ##                                      Estimate Std. Error z value Pr(>|z|)    
@@ -3943,40 +4090,44 @@ an authomatic step.
 ##     StreamingTV + PhoneService + Dependents, family = binomial, 
 ##     data = data_balanced_over)
 ## 
+## Deviance Residuals: 
+##      Min        1Q    Median        3Q       Max  
+## -2.64346  -0.72333   0.03067   0.76319   2.93878  
+## 
 ## Coefficients:
-##                                      Estimate Std. Error z value Pr(>|z|)    
-## (Intercept)                           0.20915    0.96004   0.218 0.827543    
-## log(tenure + 0.01)                   -1.63864    0.22345  -7.333 2.24e-13 ***
-## MonthlyCharges                       -0.08689    0.02828  -3.072 0.002124 ** 
-## log(TotalCharges + 0.01)              0.97214    0.21068   4.614 3.94e-06 ***
-## ContractOne year                     -0.66701    0.08917  -7.480 7.42e-14 ***
-## ContractTwo year                     -1.67592    0.13338 -12.565  < 2e-16 ***
-## OnlineSecurityYes                     0.21666    0.15810   1.370 0.170550    
-## TechSupportYes                        0.16724    0.15805   1.058 0.289991    
-## InternetServiceFiber optic            2.75859    0.70943   3.888 0.000101 ***
-## InternetServiceNo                    -2.25430    0.72493  -3.110 0.001873 ** 
-## PaymentMethodCredit card (automatic) -0.09430    0.09717  -0.970 0.331806    
-## PaymentMethodElectronic check         0.28641    0.08435   3.396 0.000685 ***
-## PaymentMethodMailed check            -0.21656    0.10409  -2.081 0.037471 *  
-## OnlineBackupYes                       0.44393    0.15679   2.831 0.004636 ** 
-## MultipleLinesYes                      0.73334    0.16007   4.581 4.62e-06 ***
-## PaperlessBillingYes                   0.28532    0.06854   4.163 3.14e-05 ***
-## SeniorCitizen1                        0.23735    0.07902   3.004 0.002666 ** 
-## PartnerYes                           -0.08161    0.07073  -1.154 0.248581    
-## genderMale                            0.08603    0.06011   1.431 0.152335    
-## DeviceProtectionYes                   0.43460    0.15719   2.765 0.005696 ** 
-## StreamingMoviesYes                    1.00211    0.28974   3.459 0.000543 ***
-## StreamingTVYes                        1.11520    0.29095   3.833 0.000127 ***
-## PhoneServiceYes                       0.97936    0.57656   1.699 0.089389 .  
-## DependentsYes                        -0.21480    0.08022  -2.678 0.007413 ** 
+##                                        Estimate Std. Error z value Pr(>|z|)    
+## (Intercept)                           0.0470931  1.0045414   0.047 0.962609    
+## log(tenure + 0.01)                   -1.7275707  0.2408954  -7.171 7.42e-13 ***
+## MonthlyCharges                       -0.0906938  0.0283548  -3.199 0.001381 ** 
+## log(TotalCharges + 0.01)              1.0811771  0.2292514   4.716 2.40e-06 ***
+## ContractOne year                     -0.7085345  0.0896567  -7.903 2.73e-15 ***
+## ContractTwo year                     -1.6532810  0.1316741 -12.556  < 2e-16 ***
+## OnlineSecurityYes                     0.1796353  0.1595718   1.126 0.260279    
+## TechSupportYes                        0.2331883  0.1592039   1.465 0.142999    
+## InternetServiceFiber optic            2.8407204  0.7111509   3.995 6.48e-05 ***
+## InternetServiceNo                    -2.2100997  0.7264209  -3.042 0.002347 ** 
+## PaymentMethodCredit card (automatic) -0.2098258  0.0970987  -2.161 0.030699 *  
+## PaymentMethodElectronic check         0.2523467  0.0839339   3.006 0.002643 ** 
+## PaymentMethodMailed check            -0.1809865  0.1030477  -1.756 0.079031 .  
+## OnlineBackupYes                       0.3477018  0.1571389   2.213 0.026918 *  
+## MultipleLinesYes                      0.7524990  0.1589706   4.734 2.21e-06 ***
+## PaperlessBillingYes                   0.3278431  0.0686478   4.776 1.79e-06 ***
+## SeniorCitizen1                        0.3132761  0.0784304   3.994 6.49e-05 ***
+## PartnerYes                           -0.0002032  0.0699698  -0.003 0.997683    
+## genderMale                            0.0607046  0.0598403   1.014 0.310371    
+## DeviceProtectionYes                   0.3994035  0.1583778   2.522 0.011674 *  
+## StreamingMoviesYes                    1.0140436  0.2914945   3.479 0.000504 ***
+## StreamingTVYes                        1.0787574  0.2909113   3.708 0.000209 ***
+## PhoneServiceYes                       0.8600436  0.5781019   1.488 0.136829    
+## DependentsYes                        -0.1883247  0.0799374  -2.356 0.018478 *  
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
 ## (Dispersion parameter for binomial family taken to be 1)
 ## 
 ##     Null deviance: 10056.2  on 7253  degrees of freedom
-## Residual deviance:  6846.7  on 7230  degrees of freedom
-## AIC: 6894.7
+## Residual deviance:  6887.3  on 7230  degrees of freedom
+## AIC: 6935.3
 ## 
 ## Number of Fisher Scoring iterations: 5
 \end{verbatim}
@@ -4007,35 +4158,39 @@ an authomatic step.
 ##     StreamingMovies + StreamingTV + Dependents, family = binomial, 
 ##     data = data_balanced_over)
 ## 
+## Deviance Residuals: 
+##      Min        1Q    Median        3Q       Max  
+## -2.60926  -0.72603   0.03593   0.76915   2.95401  
+## 
 ## Coefficients:
 ##                                       Estimate Std. Error z value Pr(>|z|)    
-## (Intercept)                          -0.973479   0.649644  -1.498 0.134008    
-## log(tenure + 0.01)                   -1.699367   0.221733  -7.664 1.80e-14 ***
-## MonthlyCharges                       -0.043272   0.006325  -6.842 7.81e-12 ***
-## log(TotalCharges + 0.01)              1.024116   0.210569   4.864 1.15e-06 ***
-## ContractOne year                     -0.674405   0.088622  -7.610 2.74e-14 ***
-## ContractTwo year                     -1.696141   0.131097 -12.938  < 2e-16 ***
-## InternetServiceFiber optic            1.674787   0.164423  10.186  < 2e-16 ***
-## InternetServiceNo                    -1.076746   0.173561  -6.204 5.51e-10 ***
-## PaymentMethodCredit card (automatic) -0.093165   0.096900  -0.961 0.336323    
-## PaymentMethodElectronic check         0.288976   0.084247   3.430 0.000603 ***
-## PaymentMethodMailed check            -0.204773   0.103786  -1.973 0.048491 *  
-## OnlineBackupYes                       0.219746   0.073780   2.978 0.002897 ** 
-## MultipleLinesYes                      0.522218   0.080373   6.497 8.17e-11 ***
-## PaperlessBillingYes                   0.288235   0.068379   4.215 2.49e-05 ***
-## SeniorCitizen1                        0.222872   0.078310   2.846 0.004427 ** 
-## DeviceProtectionYes                   0.208425   0.074712   2.790 0.005275 ** 
-## StreamingMoviesYes                    0.551924   0.087742   6.290 3.17e-10 ***
-## StreamingTVYes                        0.669093   0.089604   7.467 8.19e-14 ***
-## DependentsYes                        -0.251947   0.072877  -3.457 0.000546 ***
+## (Intercept)                          -0.982430   0.696398  -1.411  0.15832    
+## log(tenure + 0.01)                   -1.746459   0.236853  -7.374 1.66e-13 ***
+## MonthlyCharges                       -0.049946   0.006474  -7.715 1.21e-14 ***
+## log(TotalCharges + 0.01)              1.100085   0.226706   4.852 1.22e-06 ***
+## ContractOne year                     -0.703465   0.089134  -7.892 2.97e-15 ***
+## ContractTwo year                     -1.643342   0.129419 -12.698  < 2e-16 ***
+## InternetServiceFiber optic            1.824103   0.163882  11.131  < 2e-16 ***
+## InternetServiceNo                    -1.164560   0.172805  -6.739 1.59e-11 ***
+## PaymentMethodCredit card (automatic) -0.213896   0.096971  -2.206  0.02740 *  
+## PaymentMethodElectronic check         0.253626   0.083858   3.024  0.00249 ** 
+## PaymentMethodMailed check            -0.175521   0.102778  -1.708  0.08768 .  
+## OnlineBackupYes                       0.141888   0.073597   1.928  0.05387 .  
+## MultipleLinesYes                      0.553972   0.079960   6.928 4.27e-12 ***
+## PaperlessBillingYes                   0.329367   0.068412   4.814 1.48e-06 ***
+## SeniorCitizen1                        0.303755   0.077737   3.907 9.33e-05 ***
+## DeviceProtectionYes                   0.196362   0.075170   2.612  0.00899 ** 
+## StreamingMoviesYes                    0.602449   0.086615   6.955 3.51e-12 ***
+## StreamingTVYes                        0.672238   0.089779   7.488 7.01e-14 ***
+## DependentsYes                        -0.189425   0.072819  -2.601  0.00929 ** 
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
 ## (Dispersion parameter for binomial family taken to be 1)
 ## 
 ##     Null deviance: 10056.2  on 7253  degrees of freedom
-## Residual deviance:  6853.3  on 7235  degrees of freedom
-## AIC: 6891.3
+## Residual deviance:  6890.8  on 7235  degrees of freedom
+## AIC: 6928.8
 ## 
 ## Number of Fisher Scoring iterations: 5
 \end{verbatim}
@@ -4048,20 +4203,20 @@ an authomatic step.
 
 \begin{verbatim}
 ##                                GVIF Df GVIF^(1/(2*Df))
-## log(tenure + 0.01)       100.931290  1       10.046457
-## MonthlyCharges            34.442143  1        5.868743
-## log(TotalCharges + 0.01) 144.812944  1       12.033825
-## Contract                   1.579742  2        1.121106
-## InternetService           16.661349  2        2.020354
-## PaymentMethod              1.404767  3        1.058280
-## OnlineBackup               1.424352  1        1.193462
-## MultipleLines              1.798321  1        1.341015
-## PaperlessBilling           1.144333  1        1.069735
-## SeniorCitizen              1.101752  1        1.049644
-## DeviceProtection           1.443395  1        1.201414
-## StreamingMovies            2.139599  1        1.462737
-## StreamingTV                2.228942  1        1.492964
-## Dependents                 1.059390  1        1.029267
+## log(tenure + 0.01)       115.463990  1       10.745417
+## MonthlyCharges            36.905029  1        6.074951
+## log(TotalCharges + 0.01) 168.769183  1       12.991119
+## Contract                   1.559837  2        1.117557
+## InternetService           17.798229  2        2.053970
+## PaymentMethod              1.405263  3        1.058343
+## OnlineBackup               1.404405  1        1.185076
+## MultipleLines              1.786853  1        1.336732
+## PaperlessBilling           1.152434  1        1.073515
+## SeniorCitizen              1.107249  1        1.052259
+## DeviceProtection           1.454268  1        1.205930
+## StreamingMovies            2.089862  1        1.445636
+## StreamingTV                2.239475  1        1.496488
+## Dependents                 1.071201  1        1.034988
 \end{verbatim}
 
 \begin{Shaded}
@@ -4087,33 +4242,37 @@ an authomatic step.
 ##     SeniorCitizen + DeviceProtection + StreamingMovies + StreamingTV + 
 ##     Dependents, family = binomial, data = data_balanced_over)
 ## 
+## Deviance Residuals: 
+##      Min        1Q    Median        3Q       Max  
+## -2.48936  -0.74772   0.04802   0.76375   2.96033  
+## 
 ## Coefficients:
 ##                                      Estimate Std. Error z value Pr(>|z|)    
-## (Intercept)                           0.98236    0.11662   8.424  < 2e-16 ***
-## log(tenure + 0.01)                   -0.62702    0.03080 -20.357  < 2e-16 ***
-## ContractOne year                     -0.77736    0.08750  -8.885  < 2e-16 ***
-## ContractTwo year                     -1.91957    0.13053 -14.706  < 2e-16 ***
-## InternetServiceFiber optic            0.84155    0.07452  11.293  < 2e-16 ***
-## InternetServiceNo                    -0.88736    0.11459  -7.744 9.64e-15 ***
-## PaymentMethodCredit card (automatic) -0.08872    0.09668  -0.918 0.358809    
-## PaymentMethodElectronic check         0.33269    0.08375   3.972 7.12e-05 ***
-## PaymentMethodMailed check            -0.19162    0.10317  -1.857 0.063277 .  
-## OnlineBackupYes                       0.04426    0.06840   0.647 0.517580    
-## MultipleLinesYes                      0.29685    0.07036   4.219 2.46e-05 ***
-## PaperlessBillingYes                   0.30853    0.06788   4.545 5.48e-06 ***
-## SeniorCitizen1                        0.23773    0.07766   3.061 0.002205 ** 
-## DeviceProtectionYes                   0.06072    0.07087   0.857 0.391517    
-## StreamingMoviesYes                    0.27061    0.07344   3.685 0.000229 ***
-## StreamingTVYes                        0.36867    0.07455   4.945 7.62e-07 ***
-## DependentsYes                        -0.28786    0.07256  -3.967 7.28e-05 ***
+## (Intercept)                           0.97093    0.11595   8.374  < 2e-16 ***
+## log(tenure + 0.01)                   -0.59408    0.03041 -19.536  < 2e-16 ***
+## ContractOne year                     -0.82189    0.08789  -9.351  < 2e-16 ***
+## ContractTwo year                     -1.88518    0.12887 -14.629  < 2e-16 ***
+## InternetServiceFiber optic            0.82385    0.07417  11.108  < 2e-16 ***
+## InternetServiceNo                    -0.87522    0.11177  -7.830 4.86e-15 ***
+## PaymentMethodCredit card (automatic) -0.20761    0.09664  -2.148 0.031683 *  
+## PaymentMethodElectronic check         0.30548    0.08330   3.667 0.000245 ***
+## PaymentMethodMailed check            -0.15724    0.10207  -1.541 0.123431    
+## OnlineBackupYes                      -0.05753    0.06855  -0.839 0.401285    
+## MultipleLinesYes                      0.28740    0.06991   4.111 3.94e-05 ***
+## PaperlessBillingYes                   0.35379    0.06780   5.218 1.81e-07 ***
+## SeniorCitizen1                        0.31673    0.07704   4.111 3.94e-05 ***
+## DeviceProtectionYes                   0.01597    0.07099   0.225 0.821984    
+## StreamingMoviesYes                    0.27970    0.07312   3.826 0.000130 ***
+## StreamingTVYes                        0.30952    0.07409   4.177 2.95e-05 ***
+## DependentsYes                        -0.23671    0.07242  -3.269 0.001080 ** 
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
 ## (Dispersion parameter for binomial family taken to be 1)
 ## 
-##     Null deviance: 10056.2  on 7253  degrees of freedom
-## Residual deviance:  6905.6  on 7237  degrees of freedom
-## AIC: 6939.6
+##     Null deviance: 10056  on 7253  degrees of freedom
+## Residual deviance:  6959  on 7237  degrees of freedom
+## AIC: 6993
 ## 
 ## Number of Fisher Scoring iterations: 5
 \end{verbatim}
@@ -4126,18 +4285,18 @@ an authomatic step.
 
 \begin{verbatim}
 ##                        GVIF Df GVIF^(1/(2*Df))
-## log(tenure + 0.01) 1.992345  1        1.411504
-## Contract           1.495706  2        1.105889
-## InternetService    1.765842  2        1.152758
-## PaymentMethod      1.388309  3        1.056204
-## OnlineBackup       1.233319  1        1.110549
-## MultipleLines      1.391220  1        1.179500
-## PaperlessBilling   1.138547  1        1.067027
-## SeniorCitizen      1.093809  1        1.045853
-## DeviceProtection   1.304199  1        1.142016
-## StreamingMovies    1.510522  1        1.229033
-## StreamingTV        1.554848  1        1.246935
-## Dependents         1.053616  1        1.026458
+## log(tenure + 0.01) 1.971628  1        1.404147
+## Contract           1.481579  2        1.103269
+## InternetService    1.793153  2        1.157189
+## PaymentMethod      1.390028  3        1.056422
+## OnlineBackup       1.231637  1        1.109791
+## MultipleLines      1.382874  1        1.175956
+## PaperlessBilling   1.146581  1        1.070785
+## SeniorCitizen      1.100103  1        1.048858
+## DeviceProtection   1.306131  1        1.142861
+## StreamingMovies    1.504325  1        1.226509
+## StreamingTV        1.540637  1        1.241224
+## Dependents         1.064074  1        1.031540
 \end{verbatim}
 
 \begin{Shaded}
@@ -4148,8 +4307,8 @@ an authomatic step.
 
 \begin{verbatim}
 ##    df      AIC
-## b1 19 6891.257
-## b2 17 6939.603
+## b1 19 6928.838
+## b2 17 6992.976
 \end{verbatim}
 
 \begin{Shaded}
@@ -4163,7 +4322,7 @@ an authomatic step.
 \begin{verbatim}
 ## churn_pred2
 ##   No  Yes 
-## 1268  845
+## 1263  850
 \end{verbatim}
 
 \begin{Shaded}
@@ -4199,7 +4358,7 @@ an authomatic step.
 \end{Shaded}
 
 \begin{verbatim}
-## [1] 75.62707
+## [1] 75.76905
 \end{verbatim}
 
 \begin{Shaded}
@@ -4213,7 +4372,7 @@ an authomatic step.
 \end{Shaded}
 
 \begin{verbatim}
-## [1] 0.7915194
+## [1] 0.7985866
 \end{verbatim}
 
 \begin{Shaded}
@@ -4225,7 +4384,7 @@ an authomatic step.
 \end{Shaded}
 
 \begin{verbatim}
-## [1] 0.5301775
+## [1] 0.5317647
 \end{verbatim}
 
 \begin{Shaded}
@@ -4237,7 +4396,7 @@ an authomatic step.
 \end{Shaded}
 
 \begin{verbatim}
-## [1] 0.6350106
+## [1] 0.6384181
 \end{verbatim}
 
 Balancing the target variable helps us improve the precision metric. The
