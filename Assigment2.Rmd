@@ -24,12 +24,21 @@ library(dplyr)
 library(caret)
 library(gridExtra)
 library(pROC)
+library(caret)
+library(rpart)
+library(ROSE)
+library(rpart.plot)
+library(tidyverse)
+library(caret)
+library(rpart)
+library(rpart.plot)
+library(pROC)
 ```
 
 
 ```{r, include=FALSE}
-#setwd("/Users/ali/Documents/GitHub/projSIM")
-setwd("C:/Users/Brunil/Desktop/Bruna/Master/SIM/assignment_2")
+setwd("/Users/ali/Documents/GitHub/projSIM")
+#setwd("C:/Users/Brunil/Desktop/Bruna/Master/SIM/assignment_2")
 df<-read.csv("customer.xls", sep=",")
 ```
 
@@ -873,8 +882,8 @@ We see that we have improved the residuals of the model. We can observe that we 
 
 ```{r}
 #selecting the parameters that we have in the model
-test_data <- test[c(3,5,6,8,9,10,13,14,15,16,17,18)]
-pred_prob <- predict(mod23.4, newdata = test_data, type="response")
+#test_data <- test[c(3,5,6,8,9,10,13,14,15,16,17,18)]
+pred_prob <- predict(mod23.4, newdata = test, type="response")
 churn_pred<- ifelse(pred_prob>0.5,"Yes","No")
 table(churn_pred)
 table(test$Churn)
@@ -896,7 +905,6 @@ text(0.8, 0.2, paste("AUC =", round(auc(roc_curve), 2)), col = "blue", cex = 1.2
 ```
 
 Our Area Under the Curve for ROC curve is 0.85 so it is high.
-
 
 #Interpretation
 
@@ -995,3 +1003,163 @@ summary(mod19)
 AIC(mod, mod1,mod2,mod3,mod4,mod5,mod6,mod7,mod8,mod9,mod10,mod11,mod12, mod13,mod14)
 ```
 
+## Balanced data
+
+If we calculate other metrics, we can see that our model has not a very good precision, recall or f1 score. 
+```{r}
+true_positives <- tt[2, 2]
+false_positives <- tt[1, 2]
+false_negatives <- tt[2, 1]
+precision <- true_positives / (true_positives + false_positives)
+precision
+# Recall
+recall <- true_positives / (true_positives + false_negatives)
+recall
+# F1 Score
+f1_score <- 2 * (precision * recall) / (precision + recall)
+f1_score
+```
+
+We could try to balance the target variable and see if there is any improvement. To do that we will not do a mechanic stepwise, we will use an authomatic step. 
+```{r}
+table(train$Churn)
+data_balanced_over <- ovun.sample(Churn ~ ., data = train, method = "over",N=3627*2)$data
+table(data_balanced_over$Churn)
+
+data_balanced_under <- ovun.sample(Churn ~ ., data = train, method = "under", N = 1303*2, seed = 1)$data
+table(data_balanced_under$Churn)
+
+```
+
+### With undersampling
+```{r}
+b0<- glm(
+  Churn ~ log(tenure + 0.01)
+  + MonthlyCharges
+  + log(TotalCharges + 0.01)
+  + Contract + OnlineSecurity + TechSupport + InternetService + PaymentMethod 
+  + OnlineBackup + MultipleLines + PaperlessBilling + SeniorCitizen + Partner 
+  + gender + DeviceProtection + StreamingMovies + StreamingTV + PhoneService 
+  + Dependents,
+  data = data_balanced_under,
+  family = binomial
+)
+mod.fow <- stats::step(b0, trace = 0, direction = "forward")
+summary(mod.fow)
+
+b01<- glm(
+  Churn ~ log(tenure + 0.01)
+  + MonthlyCharges
+  + log(TotalCharges + 0.01)
+  + Contract  + InternetService + PaymentMethod 
+  + OnlineBackup + MultipleLines + PaperlessBilling + SeniorCitizen  
+  + DeviceProtection + StreamingMovies + StreamingTV,
+  data = data_balanced_under,
+  family = binomial
+)
+
+summary(b01)
+vif(b01)
+
+b02<- glm(
+  Churn ~ log(tenure + 0.01)
+  + Contract  + InternetService + PaymentMethod 
+  + OnlineBackup + MultipleLines + PaperlessBilling + SeniorCitizen  
+  + DeviceProtection + StreamingMovies + StreamingTV,
+  data = data_balanced_under,
+  family = binomial
+)
+summary(b02)
+vif(b02)
+```
+
+```{r}
+pred_prob2 <- predict(b02, newdata = test, type="response")
+churn_pred2<- ifelse(pred_prob2>0.5,"Yes","No")
+table(churn_pred2)
+table(test$Churn)
+#Confusion table
+tt2 <- table(churn_pred2, test$Churn);tt
+100*sum(diag(tt2))/sum(tt2) #80.79
+
+true_positives <- tt2[2, 2]
+false_positives <- tt2[1, 2]
+false_negatives <- tt2[2, 1]
+precision <- true_positives / (true_positives + false_positives)
+precision
+# Recall
+recall <- true_positives / (true_positives + false_negatives)
+recall
+# F1 Score
+f1_score <- 2 * (precision * recall) / (precision + recall)
+f1_score
+```
+
+```{r}
+b0<- glm(
+  Churn ~ log(tenure + 0.01)
+  + MonthlyCharges
+  + log(TotalCharges + 0.01)
+  + Contract + OnlineSecurity + TechSupport + InternetService + PaymentMethod 
+  + OnlineBackup + MultipleLines + PaperlessBilling + SeniorCitizen + Partner 
+  + gender + DeviceProtection + StreamingMovies + StreamingTV + PhoneService 
+  + Dependents,
+  data = data_balanced_over,
+  family = binomial
+)
+mod.fow <- stats::step(b0, trace = 0, direction = "forward")
+summary(mod.fow)
+
+b1<- glm(
+  Churn ~ log(tenure + 0.01)
+  + MonthlyCharges
+  + log(TotalCharges + 0.01)
+  + Contract  + InternetService + PaymentMethod 
+  + OnlineBackup + MultipleLines + PaperlessBilling + SeniorCitizen 
+   + DeviceProtection + StreamingMovies + StreamingTV 
+  + Dependents,
+  data = data_balanced_over,
+  family = binomial
+)
+summary(b1)
+vif(b1)
+
+
+b2<- glm(
+  Churn ~ log(tenure + 0.01)
+  + Contract  + InternetService + PaymentMethod 
+  + OnlineBackup + MultipleLines + PaperlessBilling + SeniorCitizen 
+   + DeviceProtection + StreamingMovies + StreamingTV 
+  + Dependents,
+  data = data_balanced_over,
+  family = binomial
+)
+summary(b2)
+vif(b2)
+AIC(b1,b2)
+
+```
+
+```{r}
+pred_prob2 <- predict(b2, newdata = test, type="response")
+churn_pred2<- ifelse(pred_prob2>0.5,"Yes","No")
+table(churn_pred2)
+table(test$Churn)
+#Confusion table
+tt2 <- table(churn_pred2, test$Churn);tt
+100*sum(diag(tt2))/sum(tt2) #80.79
+
+true_positives <- tt2[2, 2]
+false_positives <- tt2[1, 2]
+false_negatives <- tt2[2, 1]
+precision <- true_positives / (true_positives + false_positives)
+precision
+# Recall
+recall <- true_positives / (true_positives + false_negatives)
+recall
+# F1 Score
+f1_score <- 2 * (precision * recall) / (precision + recall)
+f1_score
+```
+
+Balencing the target variable helps us improve the precision metric. The others not that much. 
