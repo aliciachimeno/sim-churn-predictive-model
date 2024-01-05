@@ -33,12 +33,13 @@ library(caret)
 library(rpart)
 library(rpart.plot)
 library(pROC)
+library(mvoutlier)
 ```
 
 
 ```{r, include=FALSE}
-setwd("/Users/ali/Documents/GitHub/projSIM")
-#setwd("C:/Users/Brunil/Desktop/Bruna/Master/SIM/assignment_2")
+#setwd("/Users/ali/Documents/GitHub/projSIM")
+setwd("C:/Users/Brunil/Desktop/Bruna/Master/SIM/assignment_2")
 df<-read.csv("customer.xls", sep=",")
 ```
 
@@ -933,6 +934,10 @@ Y &= -0.58 - 0.5 \cdot log(\text{tenure}+0.01) + 0.00005 \cdot \text{tenure}^2 \
 \end{aligned}
 \]
 
+We can observe in our final model that there are parameters with a negative with the target variable. These variables are categorical, this means that when this event happens, it is less probable that the costumer churns. In this case, we see that if they have a contract of one year it is less probable that they churn, but even more less probable when the contract is for two years. We can also interpret that if the costumer has internet service it also reduces the probabilities for the costumer to leave the company.
+
+On the other hand, we can see parameters that have a positive relation with the target variable. This implies that when the event for the categorical variable happens, it is more probable that the costumer will churn. For example, if the costumer is a senior citizen and the payment method is mailed check it is more probable that the costumer will leave the company.We can also see that if the costumer has multiple lines it also increases the probabilities for the costumer to churn.
+
 
 \newpage
 
@@ -1002,6 +1007,24 @@ summary(mod19)
 
 AIC(mod, mod1,mod2,mod3,mod4,mod5,mod6,mod7,mod8,mod9,mod10,mod11,mod12, mod13,mod14)
 ```
+##Multivariate outliers
+de la library mvoutliers
+
+```{r}
+plot.mvoutlierCoDa(df)
+mvoutliers.CoDa(df)
+# Boxplot of Mahalanobis distances
+
+mv_outliers$dffits
+boxplot(mv_outliers$dffits, main = "Mahalanobis Distance")
+
+# Scatterplot with outliers highlighted
+plot(data$Variable1, data$Variable2)
+points(data$Variable1[mv_outliers$outliers], data$Variable2[mv_outliers$outliers], col = "red")
+
+```
+
+
 
 ## Balanced data
 
@@ -1162,4 +1185,4 @@ f1_score <- 2 * (precision * recall) / (precision + recall)
 f1_score
 ```
 
-Balencing the target variable helps us improve the precision metric. The others not that much. 
+Balancing the target variable helps us improve the precision metric. The others not that much. 

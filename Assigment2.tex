@@ -5,16 +5,19 @@
 \documentclass[
   twoside]{article}
 \usepackage{amsmath,amssymb}
-\usepackage{lmodern}
 \usepackage{iftex}
 \ifPDFTeX
   \usepackage[T1]{fontenc}
   \usepackage[utf8]{inputenc}
   \usepackage{textcomp} % provide euro and other symbols
 \else % if luatex or xetex
-  \usepackage{unicode-math}
+  \usepackage{unicode-math} % this also loads fontspec
   \defaultfontfeatures{Scale=MatchLowercase}
   \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
 \fi
 % Use upquote if available, for straight quotes in verbatim environments
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
@@ -45,13 +48,13 @@
 \newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
 \newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
 \newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
-\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
 \newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
 \newcommand{\BuiltInTok}[1]{#1}
 \newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
 \newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
 \newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
-\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
 \newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
 \newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
 \newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
@@ -59,7 +62,7 @@
 \newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
 \newcommand{\ExtensionTok}[1]{#1}
 \newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
-\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
 \newcommand{\ImportTok}[1]{#1}
 \newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
 \newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
@@ -68,7 +71,7 @@
 \newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
 \newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
 \newcommand{\RegionMarkerTok}[1]{#1}
-\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
 \newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
 \newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
 \newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
@@ -96,7 +99,7 @@
 \fi
 \IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
 \IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
-\urlstyle{same} % disable monospaced font for URLs
+\urlstyle{same}
 \hypersetup{
   pdftitle={Assignment 2},
   pdfauthor={Alícia Chimeno Sarabia and Bruna Barraquer Torres},
@@ -1586,10 +1589,6 @@ Including \emph{TechSupport} improves the model.
 ##     StreamingMovies + StreamingTV + TechSupport + DeviceProtection, 
 ##     family = binomial, data = train)
 ## 
-## Deviance Residuals: 
-##     Min       1Q   Median       3Q      Max  
-## -1.7717  -0.6683  -0.2984   0.7723   3.1679  
-## 
 ## Coefficients:
 ##                            Estimate Std. Error z value Pr(>|z|)    
 ## (Intercept)                 0.20725    0.24332   0.852 0.394345    
@@ -1754,10 +1753,6 @@ with it later.
 ##     StreamingMovies + StreamingTV + TechSupport + OnlineSecurity + 
 ##     PaperlessBilling, family = binomial, data = train)
 ## 
-## Deviance Residuals: 
-##     Min       1Q   Median       3Q      Max  
-## -1.8020  -0.6855  -0.2930   0.7658   3.1924  
-## 
 ## Coefficients:
 ##                             Estimate Std. Error z value Pr(>|z|)    
 ## (Intercept)                -0.206715   0.251517  -0.822 0.411150    
@@ -1853,10 +1848,6 @@ We keep the variable because it improves the model.
 ## glm(formula = Churn ~ tenure + MonthlyCharges + Contract + InternetService + 
 ##     StreamingMovies + StreamingTV + TechSupport + OnlineSecurity + 
 ##     PaperlessBilling + Dependents, family = binomial, data = train)
-## 
-## Deviance Residuals: 
-##     Min       1Q   Median       3Q      Max  
-## -1.8158  -0.6832  -0.2973   0.7559   3.1478  
 ## 
 ## Coefficients:
 ##                             Estimate Std. Error z value Pr(>|z|)    
@@ -2979,10 +2970,6 @@ Y &= -0.58 - 0.5 \cdot log(\text{tenure}+0.01) + 0.00005 \cdot \text{tenure}^2 \
 ## Call:
 ## glm(formula = Churn ~ gender, family = binomial, data = train)
 ## 
-## Deviance Residuals: 
-##     Min       1Q   Median       3Q      Max  
-## -0.7894  -0.7894  -0.7776   1.6235   1.6393  
-## 
 ## Coefficients:
 ##             Estimate Std. Error z value Pr(>|z|)    
 ## (Intercept) -1.00637    0.04542 -22.158   <2e-16 ***
@@ -3010,10 +2997,6 @@ Y &= -0.58 - 0.5 \cdot log(\text{tenure}+0.01) + 0.00005 \cdot \text{tenure}^2 \
 ## 
 ## Call:
 ## glm(formula = Churn ~ SeniorCitizen, family = binomial, data = train)
-## 
-## Deviance Residuals: 
-##     Min       1Q   Median       3Q      Max  
-## -1.0497  -0.7288  -0.7288   1.3107   1.7064  
 ## 
 ## Coefficients:
 ##                Estimate Std. Error z value Pr(>|z|)    
@@ -3043,10 +3026,6 @@ Y &= -0.58 - 0.5 \cdot log(\text{tenure}+0.01) + 0.00005 \cdot \text{tenure}^2 \
 ## Call:
 ## glm(formula = Churn ~ Partner, family = binomial, data = train)
 ## 
-## Deviance Residuals: 
-##     Min       1Q   Median       3Q      Max  
-## -0.8946  -0.8946  -0.6573   1.4895   1.8102  
-## 
 ## Coefficients:
 ##             Estimate Std. Error z value Pr(>|z|)    
 ## (Intercept) -0.70909    0.04215  -16.82   <2e-16 ***
@@ -3074,10 +3053,6 @@ Y &= -0.58 - 0.5 \cdot log(\text{tenure}+0.01) + 0.00005 \cdot \text{tenure}^2 \
 ## 
 ## Call:
 ## glm(formula = Churn ~ Dependents, family = binomial, data = train)
-## 
-## Deviance Residuals: 
-##     Min       1Q   Median       3Q      Max  
-## -0.8682  -0.8682  -0.5642   1.5221   1.9577  
 ## 
 ## Coefficients:
 ##               Estimate Std. Error z value Pr(>|z|)    
@@ -3107,10 +3082,6 @@ Y &= -0.58 - 0.5 \cdot log(\text{tenure}+0.01) + 0.00005 \cdot \text{tenure}^2 \
 ## Call:
 ## glm(formula = Churn ~ tenure, family = binomial, data = train)
 ## 
-## Deviance Residuals: 
-##     Min       1Q   Median       3Q      Max  
-## -1.1818  -0.8360  -0.4898   1.1893   2.3715  
-## 
 ## Coefficients:
 ##              Estimate Std. Error z value Pr(>|z|)    
 ## (Intercept)  0.010348   0.050517   0.205    0.838    
@@ -3138,10 +3109,6 @@ Y &= -0.58 - 0.5 \cdot log(\text{tenure}+0.01) + 0.00005 \cdot \text{tenure}^2 \
 ## 
 ## Call:
 ## glm(formula = Churn ~ PhoneService, family = binomial, data = train)
-## 
-## Deviance Residuals: 
-##     Min       1Q   Median       3Q      Max  
-## -0.7876  -0.7876  -0.7876   1.6259   1.6844  
 ## 
 ## Coefficients:
 ##                 Estimate Std. Error z value Pr(>|z|)    
@@ -3171,10 +3138,6 @@ Y &= -0.58 - 0.5 \cdot log(\text{tenure}+0.01) + 0.00005 \cdot \text{tenure}^2 \
 ## Call:
 ## glm(formula = Churn ~ MultipleLines, family = binomial, data = train)
 ## 
-## Deviance Residuals: 
-##     Min       1Q   Median       3Q      Max  
-## -0.8283  -0.8283  -0.7504   1.5726   1.6763  
-## 
 ## Coefficients:
 ##                  Estimate Std. Error z value Pr(>|z|)    
 ## (Intercept)      -1.12350    0.04348 -25.841  < 2e-16 ***
@@ -3202,10 +3165,6 @@ Y &= -0.58 - 0.5 \cdot log(\text{tenure}+0.01) + 0.00005 \cdot \text{tenure}^2 \
 ## 
 ## Call:
 ## glm(formula = Churn ~ InternetService, family = binomial, data = train)
-## 
-## Deviance Residuals: 
-##     Min       1Q   Median       3Q      Max  
-## -1.0398  -1.0398  -0.6431   1.3215   2.3065  
 ## 
 ## Coefficients:
 ##                            Estimate Std. Error z value Pr(>|z|)    
@@ -3236,10 +3195,6 @@ Y &= -0.58 - 0.5 \cdot log(\text{tenure}+0.01) + 0.00005 \cdot \text{tenure}^2 \
 ## Call:
 ## glm(formula = Churn ~ OnlineSecurity, family = binomial, data = train)
 ## 
-## Deviance Residuals: 
-##     Min       1Q   Median       3Q      Max  
-## -0.8625  -0.8625  -0.5630   1.5292   1.9598  
-## 
 ## Coefficients:
 ##                   Estimate Std. Error z value Pr(>|z|)    
 ## (Intercept)       -0.79719    0.03633  -21.94   <2e-16 ***
@@ -3267,10 +3222,6 @@ Y &= -0.58 - 0.5 \cdot log(\text{tenure}+0.01) + 0.00005 \cdot \text{tenure}^2 \
 ## 
 ## Call:
 ## glm(formula = Churn ~ OnlineBackup, family = binomial, data = train)
-## 
-## Deviance Residuals: 
-##     Min       1Q   Median       3Q      Max  
-## -0.8221  -0.8221  -0.7079   1.5805   1.7359  
 ## 
 ## Coefficients:
 ##                 Estimate Std. Error z value Pr(>|z|)    
@@ -3300,10 +3251,6 @@ Y &= -0.58 - 0.5 \cdot log(\text{tenure}+0.01) + 0.00005 \cdot \text{tenure}^2 \
 ## Call:
 ## glm(formula = Churn ~ DeviceProtection, family = binomial, data = train)
 ## 
-## Deviance Residuals: 
-##     Min       1Q   Median       3Q      Max  
-## -0.8147  -0.8147  -0.7228   1.5901   1.7148  
-## 
 ## Coefficients:
 ##                     Estimate Std. Error z value Pr(>|z|)    
 ## (Intercept)         -0.93239    0.03909 -23.852  < 2e-16 ***
@@ -3331,10 +3278,6 @@ Y &= -0.58 - 0.5 \cdot log(\text{tenure}+0.01) + 0.00005 \cdot \text{tenure}^2 \
 ## 
 ## Call:
 ## glm(formula = Churn ~ TechSupport, family = binomial, data = train)
-## 
-## Deviance Residuals: 
-##     Min       1Q   Median       3Q      Max  
-## -0.8594  -0.8594  -0.5874   1.5331   1.9196  
 ## 
 ## Coefficients:
 ##                Estimate Std. Error z value Pr(>|z|)    
@@ -3364,10 +3307,6 @@ Y &= -0.58 - 0.5 \cdot log(\text{tenure}+0.01) + 0.00005 \cdot \text{tenure}^2 \
 ## Call:
 ## glm(formula = Churn ~ StreamingTV, family = binomial, data = train)
 ## 
-## Deviance Residuals: 
-##     Min       1Q   Median       3Q      Max  
-## -0.8464  -0.8464  -0.7424   1.5495   1.6873  
-## 
 ## Coefficients:
 ##                Estimate Std. Error z value Pr(>|z|)    
 ## (Intercept)    -1.14795    0.04263 -26.931  < 2e-16 ***
@@ -3396,10 +3335,6 @@ Y &= -0.58 - 0.5 \cdot log(\text{tenure}+0.01) + 0.00005 \cdot \text{tenure}^2 \
 ## Call:
 ## glm(formula = Churn ~ StreamingMovies, family = binomial, data = train)
 ## 
-## Deviance Residuals: 
-##     Min       1Q   Median       3Q      Max  
-## -0.8342  -0.8342  -0.7498   1.5650   1.6770  
-## 
 ## Coefficients:
 ##                    Estimate Std. Error z value Pr(>|z|)    
 ## (Intercept)        -1.12512    0.04254 -26.449  < 2e-16 ***
@@ -3427,10 +3362,6 @@ Y &= -0.58 - 0.5 \cdot log(\text{tenure}+0.01) + 0.00005 \cdot \text{tenure}^2 \
 ## 
 ## Call:
 ## glm(formula = Churn ~ Contract, family = binomial, data = train)
-## 
-## Deviance Residuals: 
-##     Min       1Q   Median       3Q      Max  
-## -1.0490  -1.0490  -0.4923   1.3115   2.6944  
 ## 
 ## Coefficients:
 ##                  Estimate Std. Error z value Pr(>|z|)    
@@ -3461,10 +3392,6 @@ Y &= -0.58 - 0.5 \cdot log(\text{tenure}+0.01) + 0.00005 \cdot \text{tenure}^2 \
 ## Call:
 ## glm(formula = Churn ~ PaperlessBilling, family = binomial, data = train)
 ## 
-## Deviance Residuals: 
-##     Min       1Q   Median       3Q      Max  
-## -0.9003  -0.9003  -0.5994   1.4825   1.9001  
-## 
 ## Coefficients:
 ##                     Estimate Std. Error z value Pr(>|z|)    
 ## (Intercept)         -1.62562    0.06013  -27.04   <2e-16 ***
@@ -3492,10 +3419,6 @@ Y &= -0.58 - 0.5 \cdot log(\text{tenure}+0.01) + 0.00005 \cdot \text{tenure}^2 \
 ## 
 ## Call:
 ## glm(formula = Churn ~ PaymentMethod, family = binomial, data = train)
-## 
-## Deviance Residuals: 
-##     Min       1Q   Median       3Q      Max  
-## -1.0988  -0.6466  -0.6073   1.2581   1.9537  
 ## 
 ## Coefficients:
 ##                                      Estimate Std. Error z value Pr(>|z|)    
@@ -3527,10 +3450,6 @@ Y &= -0.58 - 0.5 \cdot log(\text{tenure}+0.01) + 0.00005 \cdot \text{tenure}^2 \
 ## Call:
 ## glm(formula = Churn ~ MonthlyCharges, family = binomial, data = train)
 ## 
-## Deviance Residuals: 
-##     Min       1Q   Median       3Q      Max  
-## -1.0858  -0.8479  -0.6574   1.3652   1.9844  
-## 
 ## Coefficients:
 ##                 Estimate Std. Error z value Pr(>|z|)    
 ## (Intercept)    -2.120267   0.090047  -23.55   <2e-16 ***
@@ -3558,10 +3477,6 @@ Y &= -0.58 - 0.5 \cdot log(\text{tenure}+0.01) + 0.00005 \cdot \text{tenure}^2 \
 ## 
 ## Call:
 ## glm(formula = Churn ~ TotalCharges, family = binomial, data = train)
-## 
-## Deviance Residuals: 
-##     Min       1Q   Median       3Q      Max  
-## -0.9463  -0.8675  -0.6810   1.4321   2.2323  
 ## 
 ## Coefficients:
 ##                Estimate Std. Error z value Pr(>|z|)    
@@ -3690,20 +3605,8 @@ an authomatic step.
 ## 1303 1303
 \end{verbatim}
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{data\_balanced\_both }\OtherTok{\textless{}{-}} \FunctionTok{ovun.sample}\NormalTok{(Churn }\SpecialCharTok{\textasciitilde{}}\NormalTok{ ., }\AttributeTok{data =}\NormalTok{ train, }\AttributeTok{method =} \StringTok{"both"}\NormalTok{, }\AttributeTok{p=}\FloatTok{0.5}\NormalTok{,}\AttributeTok{N=}\DecValTok{1000}\SpecialCharTok{*}\DecValTok{2}\NormalTok{, }\AttributeTok{seed =} \DecValTok{1}\NormalTok{)}\SpecialCharTok{$}\NormalTok{data}
-\FunctionTok{table}\NormalTok{(data\_balanced\_both}\SpecialCharTok{$}\NormalTok{Churn)}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-## 
-##   No  Yes 
-## 1039  961
-\end{verbatim}
-
-undersampling
+\hypertarget{with-undersampling}{%
+\subsubsection{With undersampling}\label{with-undersampling}}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -3732,10 +3635,6 @@ undersampling
 ##     SeniorCitizen + Partner + gender + DeviceProtection + StreamingMovies + 
 ##     StreamingTV + PhoneService + Dependents, family = binomial, 
 ##     data = data_balanced_under)
-## 
-## Deviance Residuals: 
-##      Min        1Q    Median        3Q       Max  
-## -2.75110  -0.70281   0.02844   0.74849   3.02235  
 ## 
 ## Coefficients:
 ##                                      Estimate Std. Error z value Pr(>|z|)    
@@ -3799,10 +3698,6 @@ undersampling
 ##     0.01) + Contract + InternetService + PaymentMethod + OnlineBackup + 
 ##     MultipleLines + PaperlessBilling + SeniorCitizen + DeviceProtection + 
 ##     StreamingMovies + StreamingTV, family = binomial, data = data_balanced_under)
-## 
-## Deviance Residuals: 
-##      Min        1Q    Median        3Q       Max  
-## -2.70917  -0.70332   0.02829   0.74897   3.08234  
 ## 
 ## Coefficients:
 ##                                      Estimate Std. Error z value Pr(>|z|)    
@@ -3880,10 +3775,6 @@ undersampling
 ##     PaymentMethod + OnlineBackup + MultipleLines + PaperlessBilling + 
 ##     SeniorCitizen + DeviceProtection + StreamingMovies + StreamingTV, 
 ##     family = binomial, data = data_balanced_under)
-## 
-## Deviance Residuals: 
-##      Min        1Q    Median        3Q       Max  
-## -2.60462  -0.71445   0.03647   0.74719   3.10624  
 ## 
 ## Coefficients:
 ##                                      Estimate Std. Error z value Pr(>|z|)    
@@ -4024,8 +3915,6 @@ undersampling
 ## [1] 0.6380282
 \end{verbatim}
 
-oversampling
-
 \begin{Shaded}
 \begin{Highlighting}[]
 \NormalTok{b0}\OtherTok{\textless{}{-}} \FunctionTok{glm}\NormalTok{(}
@@ -4053,10 +3942,6 @@ oversampling
 ##     SeniorCitizen + Partner + gender + DeviceProtection + StreamingMovies + 
 ##     StreamingTV + PhoneService + Dependents, family = binomial, 
 ##     data = data_balanced_over)
-## 
-## Deviance Residuals: 
-##      Min        1Q    Median        3Q       Max  
-## -2.60828  -0.72757   0.03546   0.76135   2.97983  
 ## 
 ## Coefficients:
 ##                                      Estimate Std. Error z value Pr(>|z|)    
@@ -4121,10 +4006,6 @@ oversampling
 ##     MultipleLines + PaperlessBilling + SeniorCitizen + DeviceProtection + 
 ##     StreamingMovies + StreamingTV + Dependents, family = binomial, 
 ##     data = data_balanced_over)
-## 
-## Deviance Residuals: 
-##      Min        1Q    Median        3Q       Max  
-## -2.59695  -0.73080   0.04247   0.76532   3.01892  
 ## 
 ## Coefficients:
 ##                                       Estimate Std. Error z value Pr(>|z|)    
@@ -4205,10 +4086,6 @@ oversampling
 ##     PaymentMethod + OnlineBackup + MultipleLines + PaperlessBilling + 
 ##     SeniorCitizen + DeviceProtection + StreamingMovies + StreamingTV + 
 ##     Dependents, family = binomial, data = data_balanced_over)
-## 
-## Deviance Residuals: 
-##      Min        1Q    Median        3Q       Max  
-## -2.51691  -0.74240   0.05225   0.76071   3.02762  
 ## 
 ## Coefficients:
 ##                                      Estimate Std. Error z value Pr(>|z|)    
@@ -4363,6 +4240,7 @@ oversampling
 ## [1] 0.6350106
 \end{verbatim}
 
-Balencing the target variable helps us improve the precision metric.
+Balancing the target variable helps us improve the precision metric. The
+others not that much.
 
 \end{document}
